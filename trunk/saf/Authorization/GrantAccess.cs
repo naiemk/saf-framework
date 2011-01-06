@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using saf.Base;
+﻿using saf.Base;
 using System.Runtime.Serialization;
 
 namespace saf.Authorization
 {
     [DataContract]
-    public class ObjectAccess : AccessBase<IsPartialAccessExtension>
+    public class GrantAccess : AccessBase
     {
         public bool View
         {
@@ -45,27 +41,36 @@ namespace saf.Authorization
                 return Permission.HasFlag(Permission.Own);
             }
         }
-        public bool PartialEdit
+        public bool? PartialEdit
         {
             get
             {
-                return AccessExtension.IsPartialEdit;
+                return AccessExtension is IsPartialAccessExtension ?
+                    (bool?)((IsPartialAccessExtension) AccessExtension).IsPartialEdit
+                    : null;
             }
         }
-        public bool PartialView
+        public bool? PartialView
         {
             get
             {
-                return AccessExtension.IsPartialView;
+                return AccessExtension is IsPartialAccessExtension ?
+                    (bool?)((IsPartialAccessExtension)AccessExtension).IsPartialView
+                    : null;
             }
         }
 
-        public ObjectAccess(Permission per, IsPartialAccessExtension ext) : base(per, ext) { }
+        public GrantAccess(Permission per, IAccessExtension ext) : base(per, ext) { }
 
 
-        public override IAccess<Permission, IsPartialAccessExtension> Make(Permission perm, IAccessExtension ext)
+        public override bool Negative
         {
-            return new ObjectAccess(perm, ext as IsPartialAccessExtension);
+            get { return false; }
+        }
+
+        public override IAccess<Permission> Make(Permission perm, IAccessExtension ext)
+        {
+            return new GrantAccess(perm, ext as IsPartialAccessExtension);
         }
     }
 }
