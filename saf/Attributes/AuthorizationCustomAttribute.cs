@@ -21,8 +21,8 @@ namespace saf.Attributes
         {
             //Run the custom authorizer
             var met = CustomType.GetMethod(Method);
-            var perm = (Permission)met.Invoke(null, new[] { principal, instance });
-            return new GrantAccess(perm, null);
+            var perm = met.Invoke(null, new[] { principal, instance });
+            return perm != null ? new GrantAccess(((Permission?)perm).Value, null) : null;
         }
 
         public IAccess<Permission> AuthorizeByType(IPrincipal principal, Type type, object instance, string property)
@@ -30,8 +30,8 @@ namespace saf.Attributes
             //Run the custom authorizer
             var met = CustomType.GetMethod(Method);
             var prop = type.GetProperty(property);
-            var perm = (Permission)met.Invoke(null, new[] { principal, instance, prop.GetValue(instance, null) });
-            return new GrantAccess(perm, null);
+            var perm = (Permission?)met.Invoke(null, new[] { principal, instance, prop.GetValue(instance, null) });
+            return perm.HasValue ? new GrantAccess(perm.Value, null) : null;
         }
     }
 }

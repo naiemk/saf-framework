@@ -46,9 +46,6 @@ namespace saf.Authorization
         /// </summary>
         public virtual IAccess<Permission> Intersect(IAccess<Permission> target)
         {
-            //Ignore .None
-            if (Permission == 0) return Make(target.Key, null);
-            if (target.Key == 0) return Make(Permission, null);
             if (target.Negative != Negative)
             {
                 var pos = target.Negative ? this : target;
