@@ -131,16 +131,7 @@ namespace safTests
         ///</summary>
         public void GetPropertyLevelPremissionsTestHelper<TP>()
         {
-            IMetadataClassProvider metadataProvider = null; // TODO: Initialize to an appropriate value
-            IAccess<TP, IAccessExtension> reflectedPermission = null; // TODO: Initialize to an appropriate value
-            Type type = null; // TODO: Initialize to an appropriate value
-            object instance = null; // TODO: Initialize to an appropriate value
-            IPrincipal principal = null; // TODO: Initialize to an appropriate value
-            IDictionary<string, IAccess<TP, IAccessExtension>> expected = null; // TODO: Initialize to an appropriate value
-            IDictionary<string, IAccess<TP, IAccessExtension>> actual;
-            actual = PermissionHelper.GetPropertyLevelPremissions<TP>(metadataProvider, reflectedPermission, type, instance, principal);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
+            
         }
 
         [TestMethod()]
@@ -154,14 +145,7 @@ namespace safTests
         ///</summary>
         public void GetPropertyPermissionsTestHelper<TP>()
         {
-            PropertyInfo propertyInfo = null; // TODO: Initialize to an appropriate value
-            object instance = null; // TODO: Initialize to an appropriate value
-            IPrincipal principal = null; // TODO: Initialize to an appropriate value
-            IAccess<TP, IAccessExtension> expected = null; // TODO: Initialize to an appropriate value
-            IAccess<TP, IAccessExtension> actual;
-            actual = PermissionHelper.GetPropertyPermissions<TP>(propertyInfo, instance, principal);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
+            
         }
 
         [TestMethod()]

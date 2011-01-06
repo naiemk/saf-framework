@@ -55,8 +55,8 @@ namespace saf.Authorization
             }
         }
 
-        public static AuthorizationToken Make( IAccess<Permission, IAccessExtension> typeAccess, 
-            IDictionary<string,IAccess<Permission, IAccessExtension>> propsAccess )
+        public static AuthorizationToken Make( IAccess<Permission> typeAccess, 
+            IDictionary<string,IAccess<Permission>> propsAccess )
         {
             return new AuthorizationToken(
                 propsAccess.Select( kv => new Tuple<String, bool, bool>

@@ -13,15 +13,15 @@ namespace saf.Attributes
         public Permission Permission;
 
 
-        public IAccess<Permission, IAccessExtension> AuthorizeByType(IPrincipal principal, Type type, object instance)
+        public IAccess<Permission> AuthorizeByType(IPrincipal principal, Type type, object instance)
         {
             //If the principle is in roles, deny permission from it
 
-            return Roles.Any(r => principal.IsInRole(r)) ? (IAccess<Permission, IAccessExtension>)new DenyAccess(Permission, new DenyAccessExtension())
-                : (IAccess<Permission, IAccessExtension>)null;
+            return Roles.Any(principal.IsInRole) ? new DenyAccess(Permission, new DenyAccessExtension())
+                : null;
         }
 
-        public IAccess<Permission, IAccessExtension> AuthorizeByType(IPrincipal principal, Type type, object instance, string property)
+        public IAccess<Permission> AuthorizeByType(IPrincipal principal, Type type, object instance, string property)
         {
 
             return AuthorizeByType(principal, type, null);

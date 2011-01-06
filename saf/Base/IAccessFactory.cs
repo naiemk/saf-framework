@@ -1,8 +1,8 @@
 ﻿
 namespace saf.Base
 {
-    interface IAccessFactory<TP, out TE> where TE:IAccessExtension
+    public interface IAccessFactory<TP> 
     {
-        IAccess<TP, TE> Make(TP perm, IAccessExtension ext);
+        IAccess<TP> Make(TP perm, IAccessExtension ext);
     }
 }

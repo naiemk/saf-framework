@@ -14,24 +14,24 @@ namespace saf.Attributes
         /// <summary>
         /// Returns the authorization result. This method will not set the PartialAccessExtension
         /// </summary>
+        /// <param name="principal"></param>
         /// <param name="type">Must be the actual type of entity, not metadata</param>
         /// <param name="instance">The entity instance</param>
-        /// <param name="property">The property within entity</param>
-        public IAccess<Permission, IAccessExtension> AuthorizeByType(IPrincipal principal, Type type, object instance)
+        public IAccess<Permission> AuthorizeByType(IPrincipal principal, Type type, object instance)
         {
             //Run the custom authorizer
             var met = CustomType.GetMethod(Method);
             var perm = (Permission)met.Invoke(null, new[] { principal, instance });
-            return (IAccess<Permission, IAccessExtension>)new ObjectAccess(perm, null);
+            return new GrantAccess(perm, null);
         }
 
-        public IAccess<Permission, IAccessExtension> AuthorizeByType(IPrincipal principal, Type type, object instance, string property)
+        public IAccess<Permission> AuthorizeByType(IPrincipal principal, Type type, object instance, string property)
         {
             //Run the custom authorizer
             var met = CustomType.GetMethod(Method);
             var prop = type.GetProperty(property);
             var perm = (Permission)met.Invoke(null, new[] { principal, instance, prop.GetValue(instance, null) });
-            return (IAccess<Permission, IAccessExtension>)new ObjectAccess(perm, null);
+            return new GrantAccess(perm, null);
         }
     }
 }

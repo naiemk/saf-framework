@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Security.Principal;
 using saf.Authorization.Management;
 using saf.Authorization;
@@ -22,16 +21,16 @@ namespace saf.Extension
                 new Tuple<T, AuthorizationToken>(l, AuthorizationHelper.GetAuthorizationToken(meta, typeof(T), l, principal)));
         }
 
-        public static IAccess<TP, TE> Intersect<TP, TE>(this IEnumerable<IAccess<TP, TE>> list) where  TE: IAccessExtension
+        public static IAccess<TP> Intersect<TP>(this IEnumerable<IAccess<TP>> list)
         {
-            return list.Aggregate(default(IAccess<TP, TE>), (current, access) => current == null ?
-                ((IAccessFactory<TP, TE>)access).Make(access.Key, access.Extension) : current.Intersect((IAccess<TP, IAccessExtension>)access));
+            return list.Aggregate(default(IAccess<TP>), (current, access) => current == null ?
+                ((IAccessFactory<TP>)access).Make(access.Key, access.Extension) : current.Intersect(access));
         }
 
-        public static IAccess<TP, TE> Union<TP, TE>(this IEnumerable<IAccess<TP, TE>> list) where TE : IAccessExtension
+        public static IAccess<TP> Union<TP>(this IEnumerable<IAccess<TP>> list) 
         {
-            return list.Aggregate(default(IAccess<TP, TE>), (current, access) => current == null ?
-                ((IAccessFactory<TP, TE>)access).Make(access.Key, access.Extension) : current.Intersect((IAccess<TP, IAccessExtension>)access));
+            return list.Aggregate(default(IAccess<TP>), (current, access) => current == null ?
+                ((IAccessFactory<TP>)access).Make(access.Key, access.Extension) : current.Intersect(access));
         }
     }
 }

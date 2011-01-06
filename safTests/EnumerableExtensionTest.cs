@@ -92,14 +92,12 @@ namespace safTests
         /// <summary>
         ///A test for Intersect
         ///</summary>
-        public void IntersectTestHelper<TP, TE>()
-
-            where TE : IAccessExtension
+        public void IntersectTestHelper<TP>()
         {
-            IEnumerable<IAccess<TP, TE>> list = null; // TODO: Initialize to an appropriate value
-            IAccess<TP, TE> expected = null; // TODO: Initialize to an appropriate value
-            IAccess<TP, TE> actual;
-            actual = EnumerableExtension.Intersect<TP, TE>(list);
+            IEnumerable<IAccess<TP>> list = null; // TODO: Initialize to an appropriate value
+            IAccess<TP> expected = null; // TODO: Initialize to an appropriate value
+            IAccess<TP> actual;
+            actual = EnumerableExtension.Intersect<TP>(list);
             Assert.AreEqual(expected, actual);
             Assert.Inconclusive("Verify the correctness of this test method.");
         }
@@ -118,12 +116,7 @@ namespace safTests
 
             where TE : IAccessExtension
         {
-            IEnumerable<IAccess<TP, TE>> list = null; // TODO: Initialize to an appropriate value
-            IAccess<TP, TE> expected = null; // TODO: Initialize to an appropriate value
-            IAccess<TP, TE> actual;
-            actual = EnumerableExtension.Union<TP, TE>(list);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
+            
         }
 
         [TestMethod()]

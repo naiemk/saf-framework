@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace saf.Authorization
 {
     [DataContract]
-    public class DenyAccess : AccessBase<DenyAccessExtension>
+    public class DenyAccess : AccessBase
     {
         public bool View
         {
@@ -42,10 +42,15 @@ namespace saf.Authorization
             }
         }
 
+        public override bool Negative
+        {
+            get { return true; }
+        }
 
-        public DenyAccess(Permission per, DenyAccessExtension ext) : base(per, ext) { }
 
-        public override IAccess<Permission, DenyAccessExtension> Make(Permission perm, IAccessExtension ext)
+        public DenyAccess(Permission per, IAccessExtension ext) : base(per, ext) { }
+
+        public override IAccess<Permission> Make(Permission perm, IAccessExtension ext)
         {
             return new DenyAccess(perm, new DenyAccessExtension());
         }
