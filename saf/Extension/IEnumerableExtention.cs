@@ -18,7 +18,8 @@ namespace saf.Extension
         {
             //Get authorization token for every single object in the list
             return list.Select(l => 
-                new Tuple<T, AuthorizationToken>(l, AuthorizationHelper.GetAuthorizationToken(meta, typeof(T), l, principal)));
+                new Tuple<T, AuthorizationToken>(l, AuthorizationHelper.GetAuthorizationToken(meta, typeof(T), l, principal)))
+                .Where(t => t.Item2 != null ).Select(t => t);
         }
 
         public static IAccess<TP> Intersect<TP>(this IEnumerable<IAccess<TP>> list)

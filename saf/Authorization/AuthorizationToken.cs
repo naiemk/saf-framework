@@ -12,66 +12,51 @@ namespace saf.Authorization
         [DataMember]
         //Tuple of propertyname visible editable
         private readonly IList<Tuple<string, bool, bool>> _properties;
-        [DataMember]
-        private readonly bool _ediatable;
-        private readonly bool _partiallyVisible;
-        private readonly bool _partiallyEditable;
 
-        public AuthorizationToken(IEnumerable<Tuple<string, bool, bool>> props, bool editable, bool partiallyVisible, bool partiallyEditable)
+        [DataMember] 
+        private readonly TypeAuthorizationToken _parentAuthorizationToken;
+
+        public AuthorizationToken(TypeAuthorizationToken parent, IEnumerable<Tuple<string, bool, bool>> props)
         {
             _properties = props.ToList();
-            _ediatable = editable;
-            _partiallyVisible = partiallyVisible;
-            _partiallyEditable = partiallyEditable;
+            _parentAuthorizationToken = parent;
         }
 
-        public bool? Visible(string property = null)
+        public bool Visible(string property = null)
         {
             if (property == null)
-                return true; //Always visible.
-            return _properties.Where(p => p.Item1 == property).Select(p => (bool?)p.Item2).FirstOrDefault();
+                return _parentAuthorizationToken.Visible; 
+            return _properties.Where(p => p.Item1 == property).Select(p => (bool?)p.Item2).FirstOrDefault() ??
+                _parentAuthorizationToken.Visible;
         }
 
-        public bool? Editable(string property = null)
+        public bool Editable(string property = null)
         {
             if (property == null)
-                return _ediatable; //Always visible.
-            return _properties.Where(p => p.Item1 == property).Select(p => (bool?)p.Item2).FirstOrDefault();
-        }
-
-        public bool? PartiallyEditable
-        {
-            get
-            {
-                return _partiallyEditable;
-            }
-        }
-
-        public bool? PartiallyVisible
-        {
-            get
-            {
-                return _partiallyVisible;
-            }
+                return _parentAuthorizationToken.Editable;
+            return _properties.Where(p => p.Item1 == property).Select(p => (bool?) p.Item2).FirstOrDefault() ??
+                   _parentAuthorizationToken.Editable;
         }
 
         public static AuthorizationToken Make( IAccess<Permission> typeAccess, 
             IDictionary<string,IAccess<Permission>> propsAccess )
         {
-            return new AuthorizationToken(
-                propsAccess.Select( kv => new Tuple<String, bool, bool>
-                    (
-                        kv.Key,
-                        kv.Value.Key.HasFlag(Permission.View) || kv.Value.Key.HasFlag(Permission.Own),
-                        kv.Value.Key.HasFlag(Permission.Edit) || kv.Value.Key.HasFlag(Permission.Own) 
-                    ) 
-                ).ToList(),
-                typeAccess.Key.HasFlag(Permission.Edit) || typeAccess.Key.HasFlag(Permission.Own),
-                typeAccess.Extension is IsPartialAccessExtension ? 
-                    ((IsPartialAccessExtension)typeAccess.Extension).IsPartialView : false,
-                typeAccess.Extension is IsPartialAccessExtension ? 
-                    ((IsPartialAccessExtension)typeAccess.Extension).IsPartialEdit : false
-                );
+            return typeAccess.Key > 0
+                       ? //Has role
+                   new AuthorizationToken(
+                       TypeAuthorizationToken.Make(typeAccess),
+                       propsAccess.Select(kv => new Tuple<String, bool, bool>
+                                                    (
+                                                    kv.Key,
+                                                    kv.Value.Key.HasFlag(Permission.View) ||
+                                                    kv.Value.Key.HasFlag(Permission.Own),
+                                                    kv.Value.Key.HasFlag(Permission.Edit) ||
+                                                    kv.Value.Key.HasFlag(Permission.Own)
+                                                    )
+                           ).ToList(),
+                       typeAccess.Key.HasFlag(Permission.Edit) || typeAccess.Key.HasFlag(Permission.Own),
+                       )
+                       : null;
         }
 
     }
