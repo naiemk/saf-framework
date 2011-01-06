@@ -35,24 +35,24 @@ namespace saf.Authorization
             }          
         }
 
-        public bool Equals(IAccess<Permission, TE> other)
+        public bool Equals(IAccess<Permission, IAccessExtension> other)
         {
             return Permission.Equals(other);
         }
 
         #region IAccess<Permission,E> Members
 
-        public virtual IAccess<Permission, TE> Intersect(IAccess<Permission, TE> target)
+        public virtual IAccess<Permission, TE> Intersect(IAccess<Permission, IAccessExtension> target)
         {
             return  Make(target.Key & this.Permission, default(TE));
         }
 
-        public virtual bool IsSubSetOf(IAccess<Permission, TE> target)
+        public virtual bool IsSubSetOf(IAccess<Permission, IAccessExtension> target)
         {
             return (target.Key & Permission) == Permission;
         }
 
-        public virtual IAccess<Permission, TE> Union(IAccess<Permission, TE> target)
+        public virtual IAccess<Permission, TE> Union(IAccess<Permission, IAccessExtension> target)
         {
             return Make(target.Key | this.Permission, default(TE));
         }
@@ -65,7 +65,7 @@ namespace saf.Authorization
 
         #region IAccessFactory<Permission,TE> Members
 
-        public abstract IAccess<Permission, TE> Make(Permission perm, TE ext);
+        public abstract IAccess<Permission, TE> Make(Permission perm, IAccessExtension ext);
 
         #endregion
 
