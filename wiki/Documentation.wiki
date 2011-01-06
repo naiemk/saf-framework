@@ -1,0 +1,13 @@
+#labels Authorization,Framewok
+#Documentation for Simple Authorization Framework
+
+= Introduction =
+
+I post blog articles about *SAF Framework* on my blog at http://www.qualityofdata.com . Don't be shy and take a look at the blog. 
+
+In [http://qualityofdata.com/2011/01/04/automatic-end-to-end-authorization-part-1/ here] I have wrote about motivation and basic rules.
+
+
+= Details =
+
+To be completed.
