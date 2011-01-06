@@ -38,7 +38,8 @@ namespace saf.Extraction
             foreach (var propertyInfo in props)
             {
                 var propPerm = GetPropertyPermissions<TP>(propertyInfo, instance, principal);
-                rv.Add(propertyInfo.Name, reflectedPermission.Intersect(propPerm));
+                if (propPerm != null)
+                    rv.Add(propertyInfo.Name, reflectedPermission != null ? reflectedPermission.Intersect(propPerm) : propPerm);
             }
 
             return rv;
