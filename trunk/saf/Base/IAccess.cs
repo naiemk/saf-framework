@@ -5,13 +5,13 @@ using System.Text;
 
 namespace saf.Base
 {
-    public interface IAccess< TA, out TE> : IEquatable<IAccess<TA, IAccessExtension>> where TE : IAccessExtension
+    public interface IAccess<TA> : IEquatable<IAccess<TA>>, IAccessFactory<Permission> 
     {
         TA Key { get; }
-        TE Extension { get; }
-        IAccess<TA, TE> Intersect(IAccess<TA, IAccessExtension> target);
-        IAccess<TA, TE> Union(IAccess<TA, IAccessExtension> target);
-        bool IsSubSetOf(IAccess<TA, IAccessExtension> target);
+        IAccessExtension Extension { get; }
+        IAccess<TA> Intersect(IAccess<TA> target);
+        IAccess<TA> Union(IAccess<TA> target);
+        bool IsSubSetOf(IAccess<TA> target);
         bool Negative { get; }
     }
 }

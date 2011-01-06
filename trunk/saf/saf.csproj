@@ -50,7 +50,7 @@
     <Compile Include="Attributes\DenyAttribute.cs" />
     <Compile Include="Attributes\GrantAttribute.cs" />
     <Compile Include="Authorization\Management\AuthorizationHelper.cs" />
-    <Compile Include="Authorization\ObjectAccess.cs" />
+    <Compile Include="Authorization\GrantAccess.cs" />
     <Compile Include="Authorization\ObjectAccessType.cs" />
     <Compile Include="Base\IAccess.cs" />
     <Compile Include="Base\IAccessExtension.cs" />

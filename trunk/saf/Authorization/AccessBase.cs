@@ -1,23 +1,21 @@
-﻿using System;
-using saf.Base;
+﻿using saf.Base;
 using System.Runtime.Serialization;
 
 namespace saf.Authorization
 {
     [DataContract]
-    public abstract class AccessBase<TE>: IAccess<Permission, TE>, IAccessFactory<Permission, TE> where TE:IAccessExtension
+    public abstract class AccessBase: IAccess<Permission>
     {
         [DataMember]
         protected readonly Permission Permission;
         [DataMember]
-        protected readonly TE AccessExtension;
-        
-        protected AccessBase(Permission permission, TE extension)
+        protected readonly IAccessExtension AccessExtension;
+
+        protected AccessBase(Permission permission, IAccessExtension extension)
         {
             Permission = permission;
             AccessExtension = extension;
         }
-
 
         public Permission Key
         {
@@ -27,7 +25,7 @@ namespace saf.Authorization
             }
         }
 
-        public TE Extension
+        public IAccessExtension Extension
         {
             get
             {
@@ -35,37 +33,52 @@ namespace saf.Authorization
             }          
         }
 
-        public bool Equals(IAccess<Permission, IAccessExtension> other)
+
+        public bool Equals(IAccess<Permission> other)
         {
             return Permission.Equals(other);
         }
 
         #region IAccess<Permission,E> Members
 
-        public virtual IAccess<Permission, TE> Intersect(IAccess<Permission, IAccessExtension> target)
+        /// <summary>
+        /// Intersect minimizes the access, intersect of a pos and neg => pos. Intersect of neg and neg => neg
+        /// </summary>
+        public virtual IAccess<Permission> Intersect(IAccess<Permission> target)
         {
-            return  Make(target.Key & this.Permission, default(TE));
+            if (target.Negative != Negative)
+            {
+                var pos = target.Negative ? this : target;
+                var neg = !target.Negative ? this : target;
+                return pos.Make(pos.Key & (Permission.All ^ neg.Key), null);
+            }
+            return  Make(target.Key & Permission, null);
         }
 
-        public virtual bool IsSubSetOf(IAccess<Permission, IAccessExtension> target)
+        public virtual bool IsSubSetOf(IAccess<Permission> target)
         {
             return (target.Key & Permission) == Permission;
         }
 
-        public virtual IAccess<Permission, TE> Union(IAccess<Permission, IAccessExtension> target)
+        /// <summary>
+        /// Union maximizes the access
+        /// </summary>
+        public virtual IAccess<Permission> Union(IAccess<Permission> target)
         {
-            return Make(target.Key | this.Permission, default(TE));
+            if (target.Negative != Negative)
+            {
+                var pos = target.Negative ? this : target;
+                return pos.Make(pos.Key, null);
+            }
+            return Make(target.Key | Permission, null);
         }
 
-        public virtual bool Negative
-        {
-            get { return false; }
-        }
+        public abstract bool Negative { get; }
         #endregion
 
-        #region IAccessFactory<Permission,TE> Members
+        #region IAccessFactory<Permission> Members
 
-        public abstract IAccess<Permission, TE> Make(Permission perm, IAccessExtension ext);
+        public abstract IAccess<Permission> Make(Permission perm, IAccessExtension ext);
 
         #endregion
 
