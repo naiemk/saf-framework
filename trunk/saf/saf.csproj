@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2239F5E6-3D4D-449D-A5DA-03FDE1312C4A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>saf</RootNamespace>
+    <AssemblyName>saf</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Authorization\AccessBase.cs" />
+    <Compile Include="Attributes\AuthorizationCustomAttribute.cs" />
+    <Compile Include="Authorization\AuthorizationToken.cs" />
+    <Compile Include="Authorization\DenyAccess.cs" />
+    <Compile Include="Authorization\DenyAccessExtension.cs" />
+    <Compile Include="Attributes\DenyAttribute.cs" />
+    <Compile Include="Attributes\GrantAttribute.cs" />
+    <Compile Include="Authorization\Management\AuthorizationHelper.cs" />
+    <Compile Include="Authorization\ObjectAccess.cs" />
+    <Compile Include="Authorization\ObjectAccessType.cs" />
+    <Compile Include="Base\IAccess.cs" />
+    <Compile Include="Base\IAccessExtension.cs" />
+    <Compile Include="Base\IPrincipalAuthorizer.cs" />
+    <Compile Include="Authorization\ObjectViewAccess.cs" />
+    <Compile Include="Authorization\IsPartialAccessExtension.cs" />
+    <Compile Include="Base\Permission.cs" />
+    <Compile Include="Authorization\ObjectViewAccesssTypes.cs" />
+    <Compile Include="Extension\IEnumerableExtention.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Base\IMetadataClass.cs" />
+    <Compile Include="Providers\SelfMetadata.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
