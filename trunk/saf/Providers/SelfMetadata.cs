@@ -3,7 +3,7 @@ using saf.Base;
 
 namespace saf.Providers
 {
-    public class SelfMetadata : IMetadataClass
+    public class SelfMetadata : IMetadataClassProvider
     {
         public Type GetMetadataType(Type type)
         {

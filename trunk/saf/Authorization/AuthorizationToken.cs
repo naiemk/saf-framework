@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Runtime.Serialization;
+using saf.Base;
 
 namespace saf.Authorization
 {
@@ -10,6 +10,7 @@ namespace saf.Authorization
     public class AuthorizationToken
     {
         [DataMember]
+        //Tuple of propertyname visible editable
         private readonly IList<Tuple<string, bool, bool>> _properties;
         [DataMember]
         private readonly bool _ediatable;
@@ -54,6 +55,24 @@ namespace saf.Authorization
             }
         }
 
+        public static AuthorizationToken Make( IAccess<Permission, IAccessExtension> typeAccess, 
+            IDictionary<string,IAccess<Permission, IAccessExtension>> propsAccess )
+        {
+            return new AuthorizationToken(
+                propsAccess.Select( kv => new Tuple<String, bool, bool>
+                    (
+                        kv.Key,
+                        kv.Value.Key.HasFlag(Permission.View) || kv.Value.Key.HasFlag(Permission.Own),
+                        kv.Value.Key.HasFlag(Permission.Edit) || kv.Value.Key.HasFlag(Permission.Own) 
+                    ) 
+                ).ToList(),
+                typeAccess.Key.HasFlag(Permission.Edit) || typeAccess.Key.HasFlag(Permission.Own),
+                typeAccess.Extension is IsPartialAccessExtension ? 
+                    ((IsPartialAccessExtension)typeAccess.Extension).IsPartialView : false,
+                typeAccess.Extension is IsPartialAccessExtension ? 
+                    ((IsPartialAccessExtension)typeAccess.Extension).IsPartialEdit : false
+                );
+        }
 
     }
 }

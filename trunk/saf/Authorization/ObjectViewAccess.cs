@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using saf.Base;
-using System.Runtime.Serialization;
+﻿using saf.Base;
 
 namespace saf.Authorization
 {
@@ -14,7 +9,7 @@ namespace saf.Authorization
         {
             get
             {
-                return _permission.HasFlag(Permission.View) || _permission.HasFlag(Permission.Own);
+                return Permission.HasFlag(Permission.View) || Permission.HasFlag(Permission.Own);
             }
         }
 
@@ -22,11 +17,16 @@ namespace saf.Authorization
         {
             get
             {
-                return _permission.HasFlag(Permission.Edit) || _permission.HasFlag(Permission.Own);
+                return Permission.HasFlag(Permission.Edit) || Permission.HasFlag(Permission.Own);
             }
         }
 
         public ObjectViewAccess(Permission perm) : base(perm, null) { }
 
+
+        public override IAccess<Permission, IAccessExtension> Make(Permission perm, IAccessExtension ext)
+        {
+            return new ObjectViewAccess(perm);
+        }
     }
 }
