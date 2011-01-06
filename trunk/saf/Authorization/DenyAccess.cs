@@ -45,7 +45,7 @@ namespace saf.Authorization
 
         public DenyAccess(Permission per, DenyAccessExtension ext) : base(per, ext) { }
 
-        public override IAccess<Permission, DenyAccessExtension> Make(Permission perm, DenyAccessExtension ext)
+        public override IAccess<Permission, DenyAccessExtension> Make(Permission perm, IAccessExtension ext)
         {
             return new DenyAccess(perm, new DenyAccessExtension());
         }

@@ -1,10 +1,13 @@
-﻿using saf.Extraction;
+﻿using saf.Attributes;
+using saf.Extraction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using saf.Base;
 using System.Security.Principal;
 using System.Collections.Generic;
 using System.Reflection;
+using saf.Providers;
+using System.Security;
 
 namespace safTests
 {
@@ -68,21 +71,59 @@ namespace safTests
         #endregion
 
 
+        [Grant(Roles = new[] { "Everyone" }, Permission = Permission.View)]
+        [Grant(Roles = new[] { "QLDAdmin", "NSWAdmin" }, Permission = Permission.View | Permission.Edit | Permission.Create)]
+        [Grant(Roles = new[] { "Deleter" }, Permission = Permission.Delete)]
+        [Grant(Roles = new[] { "God" }, Permission = Permission.Own)]
+        [Deny(Roles = new[] { "NSWAdmin" }, Permission = Permission.Edit)]
+        public class TestObject
+        {
+            [Grant(Roles = new[] { "Everyone" }, Permission = Permission.View)]
+            [Deny(Roles = new[] { "God" }, Permission = Permission.View)]
+            public int YouCanSeeMe { get; set; }
+
+            [Grant(Roles = new[] { "Everyone" }, Permission = Permission.Edit)]
+            [Deny(Roles = new[] { "God" }, Permission = Permission.Edit | Permission.View)]
+            public string YouCanEditMe { get; set; }
+
+            [Deny(Roles = new[] { "Everyone" }, Permission = Permission.View)]
+            public string YouCanNotSeeMe { get; set; }
+
+            [Deny(Roles = new[] { "Everyone" }, Permission = Permission.Edit)]
+            public string YouCanSeeMeButNotEditMe { get; set; }
+
+            public string[] States { get; set; }
+        }
+
+
         /// <summary>
         ///A test for GetObjectLevelPremission
         ///</summary>
         [TestMethod()]
         public void GetObjectLevelPremissionTest()
         {
-            IMetadataClassProvider metadataProvider = null; // TODO: Initialize to an appropriate value
-            Type type = null; // TODO: Initialize to an appropriate value
-            object instance = null; // TODO: Initialize to an appropriate value
-            IPrincipal principal = null; // TODO: Initialize to an appropriate value
-            IAccess<Permission, IAccessExtension> expected = null; // TODO: Initialize to an appropriate value
-            IAccess<Permission, IAccessExtension> actual;
-            actual = PermissionHelper.GetObjectLevelPremission(metadataProvider, type, instance, principal);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
+            IMetadataClassProvider metadataProvider = new SelfMetadata();
+            var to = new TestObject();
+            var everyone = new TestUser() { Roles = new[] { "Everyone" } };
+            var god = new TestUser() { Roles = new[] { "God" } };
+            var adminNsw = new TestUser() { Roles = new[] { "NSWAdmin" } };
+            var adminQld = new TestUser() { Roles = new[] { "QLDAdmin" } };
+
+            var actual = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, everyone);
+            Assert.AreEqual(true, actual.Key.HasFlag(Permission.View));
+            Assert.AreEqual(false, actual.Key.HasFlag(Permission.Edit));
+            Assert.AreEqual(false, actual.Key.HasFlag(Permission.Create));
+
+            actual = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, god);
+            Assert.AreEqual(true, actual.Key.HasFlag(Permission.Own));
+
+            actual = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, adminNsw);
+            Assert.AreEqual(false, actual.Key.HasFlag(Permission.Edit));
+            Assert.AreEqual(true, actual.Key.HasFlag(Permission.View));
+
+            actual = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, adminQld);
+            Assert.AreEqual(true, actual.Key.HasFlag(Permission.Edit));
+            Assert.AreEqual(true, actual.Key.HasFlag(Permission.View));
         }
 
         /// <summary>

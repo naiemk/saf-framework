@@ -63,9 +63,9 @@ namespace saf.Authorization
         public ObjectAccess(Permission per, IsPartialAccessExtension ext) : base(per, ext) { }
 
 
-        public override IAccess<Permission, IsPartialAccessExtension> Make(Permission perm, IsPartialAccessExtension ext)
+        public override IAccess<Permission, IsPartialAccessExtension> Make(Permission perm, IAccessExtension ext)
         {
-            return new ObjectAccess(perm, ext);
+            return new ObjectAccess(perm, ext as IsPartialAccessExtension);
         }
     }
 }

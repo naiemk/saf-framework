@@ -24,14 +24,14 @@ namespace saf.Extension
 
         public static IAccess<TP, TE> Intersect<TP, TE>(this IEnumerable<IAccess<TP, TE>> list) where  TE: IAccessExtension
         {
-            return list.Aggregate(default(IAccess<TP, TE>), (current, access) => current == null ? 
-                ((IAccessFactory<TP, TE>) access).Make(access.Key, access.Extension) : current.Intersect(access));
+            return list.Aggregate(default(IAccess<TP, TE>), (current, access) => current == null ?
+                ((IAccessFactory<TP, TE>)access).Make(access.Key, access.Extension) : current.Intersect((IAccess<TP, IAccessExtension>)access));
         }
 
         public static IAccess<TP, TE> Union<TP, TE>(this IEnumerable<IAccess<TP, TE>> list) where TE : IAccessExtension
         {
             return list.Aggregate(default(IAccess<TP, TE>), (current, access) => current == null ?
-                ((IAccessFactory<TP, TE>)access).Make(access.Key, access.Extension) : current.Intersect(access));
+                ((IAccessFactory<TP, TE>)access).Make(access.Key, access.Extension) : current.Intersect((IAccess<TP, IAccessExtension>)access));
         }
     }
 }

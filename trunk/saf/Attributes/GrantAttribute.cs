@@ -17,7 +17,7 @@ namespace saf.Attributes
         {
             //If the principle is in roles, give it the permission
 
-            return Roles.Any(principal.IsInRole) ? (IAccess<Permission, IAccessExtension>)new ObjectAccess(Permission, null) 
+            return Roles.Any(principal.IsInRole) ? (IAccess<Permission, IsPartialAccessExtension>)new ObjectAccess(Permission, null) 
                 : (IAccess<Permission, IAccessExtension>) null;
         }
 

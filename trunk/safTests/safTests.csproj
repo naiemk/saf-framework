@@ -56,6 +56,7 @@
     <Compile Include="EnumerableExtensionTest.cs" />
     <Compile Include="PermissionHelperTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestUser.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\saf\saf.csproj">
