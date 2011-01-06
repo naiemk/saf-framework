@@ -1,13 +1,10 @@
-﻿using saf.Attributes;
+﻿using System.Linq;
+using System.Security.Principal;
+using saf.Attributes;
 using saf.Extraction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using saf.Base;
-using System.Security.Principal;
-using System.Collections.Generic;
-using System.Reflection;
 using saf.Providers;
-using System.Security;
 
 namespace safTests
 {
@@ -71,30 +68,6 @@ namespace safTests
         #endregion
 
 
-        [Grant(Roles = new[] { "Everyone" }, Permission = Permission.View)]
-        [Grant(Roles = new[] { "QLDAdmin", "NSWAdmin" }, Permission = Permission.View | Permission.Edit | Permission.Create)]
-        [Grant(Roles = new[] { "Deleter" }, Permission = Permission.Delete)]
-        [Grant(Roles = new[] { "God" }, Permission = Permission.Own)]
-        [Deny(Roles = new[] { "NSWAdmin" }, Permission = Permission.Edit)]
-        public class TestObject
-        {
-            [Grant(Roles = new[] { "Everyone" }, Permission = Permission.View)]
-            [Deny(Roles = new[] { "God" }, Permission = Permission.View)]
-            public int YouCanSeeMe { get; set; }
-
-            [Grant(Roles = new[] { "Everyone" }, Permission = Permission.Edit)]
-            [Deny(Roles = new[] { "God" }, Permission = Permission.Edit | Permission.View)]
-            public string YouCanEditMe { get; set; }
-
-            [Deny(Roles = new[] { "Everyone" }, Permission = Permission.View)]
-            public string YouCanNotSeeMe { get; set; }
-
-            [Deny(Roles = new[] { "Everyone" }, Permission = Permission.Edit)]
-            public string YouCanSeeMeButNotEditMe { get; set; }
-
-            public string[] States { get; set; }
-        }
-
 
         /// <summary>
         ///A test for GetObjectLevelPremission
@@ -108,6 +81,8 @@ namespace safTests
             var god = new TestUser() { Roles = new[] { "God" } };
             var adminNsw = new TestUser() { Roles = new[] { "NSWAdmin" } };
             var adminQld = new TestUser() { Roles = new[] { "QLDAdmin" } };
+            var userWA = new TestUser() { Roles = new[] { "WAuser" } };
+            var userQLD = new TestUser() { Roles = new[] { "QLDuser" } };
 
             var actual = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, everyone);
             Assert.AreEqual(true, actual.Key.HasFlag(Permission.View));
@@ -124,34 +99,60 @@ namespace safTests
             actual = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, adminQld);
             Assert.AreEqual(true, actual.Key.HasFlag(Permission.Edit));
             Assert.AreEqual(true, actual.Key.HasFlag(Permission.View));
+
+            to = new TestObject() { States = new[] { "QLD", "NSW" } };
+            actual = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, userWA);
+            Assert.IsNull(actual);
+
+            actual = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, userQLD);
+            Assert.AreEqual(true, actual.Key.HasFlag(Permission.View));
+            Assert.AreEqual(true, actual.Key.HasFlag(Permission.Create));
+
+            actual = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, adminQld);
+            Assert.AreEqual(true, actual.Key.HasFlag(Permission.Delete));
+            Assert.AreEqual(true, actual.Key.HasFlag(Permission.View));
         }
 
-        /// <summary>
-        ///A test for GetPropertyLevelPremissions
-        ///</summary>
-        public void GetPropertyLevelPremissionsTestHelper<TP>()
-        {
-            
-        }
 
         [TestMethod()]
         public void GetPropertyLevelPremissionsTest()
         {
-            GetPropertyLevelPremissionsTestHelper<GenericParameterHelper>();
+            IMetadataClassProvider metadataProvider = new SelfMetadata();
+            var to = new TestObject();
+            var everyone = new TestUser() { Roles = new[] { "Everyone" } };
+            var god = new TestUser() { Roles = new[] { "God" } };
+            var anon = new TestUser() { Roles = new string[0] };
+
+            var parent = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, everyone);
+            var actual = PermissionHelper.GetPropertyLevelPremissions(metadataProvider, parent, typeof(TestObject), to, everyone);
+            Assert.AreEqual(true, actual["YouCanSeeMe"].Key.HasFlag(Permission.View));
+            Assert.AreEqual(false, actual["YouCanSeeMe"].Key.HasFlag(Permission.Edit));
+            Assert.AreEqual(false, actual["YouCanSeeMe"].Key.HasFlag(Permission.Create));
+            Assert.AreEqual(false, actual["YouCanNotSeeMe"].Key.HasFlag(Permission.View));
+            Assert.AreEqual(true, actual["YouCanSeeMeButNotEditMe"].Key.HasFlag(Permission.View));
+            Assert.AreEqual(false, actual["YouCanSeeMeButNotEditMe"].Key.HasFlag(Permission.Edit));
+
+            parent = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, god);
+            actual = PermissionHelper.GetPropertyLevelPremissions(metadataProvider, parent, typeof(TestObject), to, god);
+            Assert.AreEqual(false, actual["YouCanSeeMe"].Key.HasFlag(Permission.View));
+            Assert.AreEqual(false, actual["YouCanEditMe"].Key.HasFlag(Permission.View));
+            Assert.AreEqual(false, actual["YouCanEditMe"].Key.HasFlag(Permission.Edit));
+            Assert.AreEqual(false, actual.ContainsKey("YouCanNotSeeMe"));
+
+            parent = null;
+            actual = PermissionHelper.GetPropertyLevelPremissions(metadataProvider, parent, typeof(TestObject), to, everyone);
+            Assert.AreEqual(true, actual["YouCanSeeMe"].Key.HasFlag(Permission.View));
+
+            parent = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, anon);
+            actual = PermissionHelper.GetPropertyLevelPremissions(metadataProvider, parent, typeof(TestObject), to, anon);
+            Assert.AreEqual(true, actual["EverybodyCanSeeMe"].Key.HasFlag(Permission.View));
+
+            var qldMan = new TestUser() { Roles = new[] { "QLDMan" } };
+            to = new TestObject() {YouCanSeeMe = 0, States = new[] {"QLD", "NSW"}};
+            parent = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, qldMan);
+            actual = PermissionHelper.GetPropertyLevelPremissions(metadataProvider, parent, typeof(TestObject), to, qldMan);
+            Assert.AreEqual(false, actual["EverybodyCanSeeMe"].Key.HasFlag(Permission.View));
         }
 
-        /// <summary>
-        ///A test for GetPropertyPermissions
-        ///</summary>
-        public void GetPropertyPermissionsTestHelper<TP>()
-        {
-            
-        }
-
-        [TestMethod()]
-        public void GetPropertyPermissionsTest()
-        {
-            GetPropertyPermissionsTestHelper<GenericParameterHelper>();
-        }
     }
 }

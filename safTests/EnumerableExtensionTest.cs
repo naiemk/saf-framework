@@ -1,10 +1,9 @@
 ﻿using saf.Extension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
 using saf.Base;
-using System.Security.Principal;
-using saf.Authorization;
+using saf.Providers;
+using System.Linq;
 
 namespace safTests
 {
@@ -68,62 +67,30 @@ namespace safTests
         #endregion
 
 
-        /// <summary>
-        ///A test for FilterAuthorized
-        ///</summary>
-        public void FilterAuthorizedTestHelper<T>()
-        {
-            IEnumerable<T> list = null; // TODO: Initialize to an appropriate value
-            IMetadataClassProvider meta = null; // TODO: Initialize to an appropriate value
-            IPrincipal principal = null; // TODO: Initialize to an appropriate value
-            IEnumerable<Tuple<T, AuthorizationToken>> expected = null; // TODO: Initialize to an appropriate value
-            IEnumerable<Tuple<T, AuthorizationToken>> actual;
-            actual = EnumerableExtension.FilterAuthorized<T>(list, meta, principal);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
 
         [TestMethod()]
         public void FilterAuthorizedTest()
         {
-            FilterAuthorizedTestHelper<GenericParameterHelper>();
+            IMetadataClassProvider sm = new SelfMetadata();
+            var everyone = new TestUser() { Roles = new[] { "Everyone" } };
+            var qldMan = new TestUser() { Roles = new[] { "QLDMan" } };
+
+            var coll = new[]
+                           {
+                               new TestObject() {YouCanSeeMe = 0, States = new[] {"QLD", "NSW"}},
+                               new TestObject() {YouCanSeeMe = 1},
+                               new TestObject() {YouCanSeeMe = 2, YouCanNotSeeMe = "a", States = new[] {"QLD"}},
+                               new TestObject() {YouCanSeeMe = 3},
+                               new TestObject() {YouCanSeeMe = 4, YouCanNotSeeMe = "b"}
+                           };
+            var filtered = coll.FilterAuthorized(sm, everyone).ToList();
+            Assert.AreEqual(5, filtered.Count());
+
+            filtered = coll.FilterAuthorized(sm, qldMan).ToList();
+            Assert.AreEqual(2, filtered.Count());
+
+            //Ensure unavailable data is scraped.
         }
 
-        /// <summary>
-        ///A test for Intersect
-        ///</summary>
-        public void IntersectTestHelper<TP>()
-        {
-            IEnumerable<IAccess<TP>> list = null; // TODO: Initialize to an appropriate value
-            IAccess<TP> expected = null; // TODO: Initialize to an appropriate value
-            IAccess<TP> actual;
-            actual = EnumerableExtension.Intersect<TP>(list);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-
-        [TestMethod()]
-        public void IntersectTest()
-        {
-            Assert.Inconclusive("No appropriate type parameter is found to satisfies the type constraint(s) of TE." +
-                    " Please call IntersectTestHelper<TP, TE>() with appropriate type parameters.");
-        }
-
-        /// <summary>
-        ///A test for Union
-        ///</summary>
-        public void UnionTestHelper<TP, TE>()
-
-            where TE : IAccessExtension
-        {
-            
-        }
-
-        [TestMethod()]
-        public void UnionTest()
-        {
-            Assert.Inconclusive("No appropriate type parameter is found to satisfies the type constraint(s) of TE." +
-                    " Please call UnionTestHelper<TP, TE>() with appropriate type parameters.");
-        }
     }
 }
