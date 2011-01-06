@@ -52,7 +52,11 @@ namespace saf.Authorization
                 var neg = !target.Negative ? this : target;
                 return pos.Make(pos.Key & (Permission.All ^ neg.Key), null);
             }
-            return  Make(target.Key & Permission, null);
+            if (target.Negative && Negative)
+            {
+                Make(target.Key | Permission, null);
+            }
+            return Make(target.Key & Permission, null);
         }
 
         public virtual bool IsSubSetOf(IAccess<Permission> target)
@@ -61,14 +65,15 @@ namespace saf.Authorization
         }
 
         /// <summary>
-        /// Union maximizes the access
+        /// Union summs up the access
         /// </summary>
         public virtual IAccess<Permission> Union(IAccess<Permission> target)
         {
             if (target.Negative != Negative)
             {
                 var pos = target.Negative ? this : target;
-                return pos.Make(pos.Key, null);
+                var neg = !target.Negative ? this : target;
+                return pos.Make(pos.Key & (Permission.All ^ neg.Key), null); 
             }
             return Make(target.Key | Permission, null);
         }

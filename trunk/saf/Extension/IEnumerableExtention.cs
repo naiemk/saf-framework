@@ -30,7 +30,7 @@ namespace saf.Extension
         public static IAccess<TP> Union<TP>(this IEnumerable<IAccess<TP>> list) 
         {
             return list.Aggregate(default(IAccess<TP>), (current, access) => current == null ?
-                ((IAccessFactory<TP>)access).Make(access.Key, access.Extension) : current.Intersect(access));
+                ((IAccessFactory<TP>)access).Make(access.Key, access.Extension) : current.Union(access));
         }
     }
 }
