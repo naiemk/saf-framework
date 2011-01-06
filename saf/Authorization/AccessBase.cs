@@ -1,23 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using saf.Base;
 using System.Runtime.Serialization;
 
 namespace saf.Authorization
 {
     [DataContract]
-    public abstract class AccessBase<E>: IAccess<Permission, E> where E:IAccessExtension
+    public abstract class AccessBase<TE>: IAccess<Permission, TE>, IAccessFactory<Permission, TE> where TE:IAccessExtension
     {
         [DataMember]
-        protected readonly Permission _permission;
+        protected readonly Permission Permission;
         [DataMember]
-        protected readonly E _accessExtension;
-        public AccessBase(Permission permission, E extension)
+        protected readonly TE AccessExtension;
+        
+        protected AccessBase(Permission permission, TE extension)
         {
-            _permission = permission;
-            _accessExtension = extension;
+            Permission = permission;
+            AccessExtension = extension;
         }
 
 
@@ -25,21 +23,51 @@ namespace saf.Authorization
         {
             get
             {
-                return _permission;
+                return Permission;
             }
         }
 
-        public E Extension
+        public TE Extension
         {
             get
             {
-                return _accessExtension;
+                return AccessExtension;
             }          
         }
 
-        public bool Equals(IAccess<Permission, E> other)
+        public bool Equals(IAccess<Permission, TE> other)
         {
-            return _permission.Equals(other);
+            return Permission.Equals(other);
         }
+
+        #region IAccess<Permission,E> Members
+
+        public virtual IAccess<Permission, TE> Intersect(IAccess<Permission, TE> target)
+        {
+            return  Make(target.Key & this.Permission, default(TE));
+        }
+
+        public virtual bool IsSubSetOf(IAccess<Permission, TE> target)
+        {
+            return (target.Key & Permission) == Permission;
+        }
+
+        public virtual IAccess<Permission, TE> Union(IAccess<Permission, TE> target)
+        {
+            return Make(target.Key | this.Permission, default(TE));
+        }
+
+        public virtual bool Negative
+        {
+            get { return false; }
+        }
+        #endregion
+
+        #region IAccessFactory<Permission,TE> Members
+
+        public abstract IAccess<Permission, TE> Make(Permission perm, TE ext);
+
+        #endregion
+
     }
 }

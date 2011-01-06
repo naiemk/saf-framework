@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using saf.Base;
+﻿using saf.Base;
 using System.Runtime.Serialization;
 
 namespace saf.Authorization
@@ -14,39 +10,44 @@ namespace saf.Authorization
         {
             get
             {
-                return _permission.HasFlag(Permission.View);
+                return Permission.HasFlag(Permission.View);
             }
         }
         public bool Edit
         {
             get
             {
-                return _permission.HasFlag(Permission.Edit);
+                return Permission.HasFlag(Permission.Edit);
             }
         }
         public bool Create
         {
             get
             {
-                return _permission.HasFlag(Permission.Create);
+                return Permission.HasFlag(Permission.Create);
             }
         }
         public bool Delete
         {
             get
             {
-                return _permission.HasFlag(Permission.Delete);
+                return Permission.HasFlag(Permission.Delete);
             }
         }
         public bool Own
         {
             get
             {
-                return _permission.HasFlag(Permission.Own);
+                return Permission.HasFlag(Permission.Own);
             }
         }
 
 
         public DenyAccess(Permission per, DenyAccessExtension ext) : base(per, ext) { }
+
+        public override IAccess<Permission, DenyAccessExtension> Make(Permission perm, DenyAccessExtension ext)
+        {
+            return new DenyAccess(perm, new DenyAccessExtension());
+        }
     }
 }

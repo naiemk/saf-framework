@@ -14,52 +14,58 @@ namespace saf.Authorization
         {
             get
             {
-                return _permission.HasFlag(Permission.View);
+                return Permission.HasFlag(Permission.View);
             }
         }
         public bool Edit
         {
             get
             {
-                return _permission.HasFlag(Permission.Edit);
+                return Permission.HasFlag(Permission.Edit);
             }
         }
         public bool Create
         {
             get
             {
-                return _permission.HasFlag(Permission.Create);
+                return Permission.HasFlag(Permission.Create);
             }
         }
         public bool Delete
         {
             get
             {
-                return _permission.HasFlag(Permission.Delete);
+                return Permission.HasFlag(Permission.Delete);
             }
         }
         public bool Own
         {
             get
             {
-                return _permission.HasFlag(Permission.Own);
+                return Permission.HasFlag(Permission.Own);
             }
         }
         public bool PartialEdit
         {
             get
             {
-                return _accessExtension.IsPartialEdit;
+                return AccessExtension.IsPartialEdit;
             }
         }
         public bool PartialView
         {
             get
             {
-                return _accessExtension.IsPartialView;
+                return AccessExtension.IsPartialView;
             }
         }
 
         public ObjectAccess(Permission per, IsPartialAccessExtension ext) : base(per, ext) { }
+
+
+        public override IAccess<Permission, IsPartialAccessExtension> Make(Permission perm, IsPartialAccessExtension ext)
+        {
+            return new ObjectAccess(perm, ext);
+        }
     }
 }

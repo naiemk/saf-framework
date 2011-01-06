@@ -5,7 +5,7 @@ using System.Text;
 
 namespace saf.Base
 {
-    public interface IMetadataClass
+    public interface IMetadataClassProvider
     {
         Type GetMetadataType(Type type);
     }
