@@ -41,7 +41,7 @@ namespace saf.Authorization
         public static AuthorizationToken Make( IAccess<Permission> typeAccess, 
             IDictionary<string,IAccess<Permission>> propsAccess )
         {
-            return typeAccess.Key > 0
+            return typeAccess != null && typeAccess.Key > 0
                        ? //Has role
                    new AuthorizationToken(
                        TypeAuthorizationToken.Make(typeAccess),
@@ -53,8 +53,7 @@ namespace saf.Authorization
                                                     kv.Value.Key.HasFlag(Permission.Edit) ||
                                                     kv.Value.Key.HasFlag(Permission.Own)
                                                     )
-                           ).ToList(),
-                       typeAccess.Key.HasFlag(Permission.Edit) || typeAccess.Key.HasFlag(Permission.Own),
+                           ).ToList()
                        )
                        : null;
         }

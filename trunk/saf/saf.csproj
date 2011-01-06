@@ -52,6 +52,7 @@
     <Compile Include="Authorization\Management\AuthorizationHelper.cs" />
     <Compile Include="Authorization\GrantAccess.cs" />
     <Compile Include="Authorization\ObjectAccessType.cs" />
+    <Compile Include="Authorization\TypeAuthorizationToken.cs" />
     <Compile Include="Base\IAccess.cs" />
     <Compile Include="Base\IAccessExtension.cs" />
     <Compile Include="Base\IAccessFactory.cs" />
