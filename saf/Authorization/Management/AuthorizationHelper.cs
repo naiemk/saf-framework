@@ -8,30 +8,30 @@ namespace saf.Authorization.Management
 {
     public static class AuthorizationHelper
     {
-        public static AuthorizationToken GetAuthorizationToken(IMetadataClassProvider meta, Type type, object instance, IPrincipal principal)
+        public static AuthorizationToken GetAuthorizationToken(IAuthorizationRuleProvider<Permission> auth, Type type, object instance, IPrincipal principal)
         {
-            var typePerm = PermissionHelper.GetObjectLevelPremission(meta, type, instance, principal);
+            var typePerm = PermissionHelper.GetObjectLevelPremission<Permission>(auth, type, instance, principal);
             return AuthorizationToken.Make(
                 typePerm,
-                PermissionHelper.GetPropertyLevelPremissions(meta, typePerm, type, instance, principal)
+                PermissionHelper.GetPropertyLevelPremissions<Permission>(auth, typePerm, type, instance, principal)
                 );
         }
 
-        public static bool CanUpdate(IMetadataClassProvider meta, Type type, object instance, IPrincipal principal)
+        public static bool CanUpdate(IAuthorizationRuleProvider<Permission> auth, Type type, object instance, IPrincipal principal)
         {
-            var typePerm = PermissionHelper.GetObjectLevelPremission(meta, type, instance, principal);
+            var typePerm = PermissionHelper.GetObjectLevelPremission<Permission>(auth, type, instance, principal);
             return typePerm.Key.HasFlag(Permission.Edit) || typePerm.Key.HasFlag(Permission.Own);
         }
 
-        public static bool CanInsert(IMetadataClassProvider meta, Type type, object instance, IPrincipal principal)
+        public static bool CanInsert(IAuthorizationRuleProvider<Permission> auth, Type type, object instance, IPrincipal principal)
         {
-            var typePerm = PermissionHelper.GetObjectLevelPremission(meta, type, instance, principal);
+            var typePerm = PermissionHelper.GetObjectLevelPremission<Permission>(auth, type, instance, principal);
             return typePerm.Key.HasFlag(Permission.Create) || typePerm.Key.HasFlag(Permission.Own);
         }
 
-        public static bool CanDelete(IMetadataClassProvider meta, Type type, object instance, IPrincipal principal)
+        public static bool CanDelete(IAuthorizationRuleProvider<Permission> auth, Type type, object instance, IPrincipal principal)
         {
-            var typePerm = PermissionHelper.GetObjectLevelPremission(meta, type, instance, principal);
+            var typePerm = PermissionHelper.GetObjectLevelPremission<Permission>(auth, type, instance, principal);
             return typePerm.Key.HasFlag(Permission.Delete) || typePerm.Key.HasFlag(Permission.Own);
         }
         

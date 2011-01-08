@@ -12,19 +12,34 @@ namespace saf.Attributes
         public String[] Roles;
         public Permission Permission;
         public const string WildChar = "*";
+        public Type ConditionType;
+        public string Condition;
+
+        private IAuthenticationCustomizer<bool> _condition;
 
         public IAccess<Permission> AuthorizeByType(IPrincipal principal, Type type, object instance)
         {
             //If the principle is in roles, give it the permission
 
-            return Roles.Any(r => principal.IsInRole(r) || r == WildChar) ? new GrantAccess(Permission, null) 
+            return 
+                    Roles.Any(r => principal.IsInRole(r) || r == WildChar) &&
+                    _condition.CustomMethod(ConditionType ?? type, Condition, principal, instance)
+                    ? new GrantAccess(Permission, null) 
                 : null;
         }
 
         public IAccess<Permission> AuthorizeByType(IPrincipal principal, Type type, object instance, string property)
         {
+            return 
+                Roles.Any(r => principal.IsInRole(r) || r == WildChar) &&
+                    _condition.CustomMethod(ConditionType ?? type, Condition, principal, instance, property)
+                    ? new GrantAccess(Permission, null)
+                : null;
+        }
 
-            return AuthorizeByType(principal, type, null);
+        public GrantAttribute()
+        {
+            _condition = new BasicAuthenticationCustomizer<bool>();
         }
     }
 }

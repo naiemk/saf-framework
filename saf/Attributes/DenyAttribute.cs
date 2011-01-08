@@ -11,20 +11,33 @@ namespace saf.Attributes
     {
         public String[] Roles;
         public Permission Permission;
+        public Type ConditionType;
+        public string Condition;
 
+        private IAuthenticationCustomizer<bool> _condition;
 
         public IAccess<Permission> AuthorizeByType(IPrincipal principal, Type type, object instance)
         {
             //If the principle is in roles, deny permission from it
 
-            return Roles.Any(principal.IsInRole) ? new DenyAccess(Permission, new DenyAccessExtension())
+            return Roles.Any(principal.IsInRole) &&
+                    _condition.CustomMethod(ConditionType ?? type, Condition, principal, instance)
+                    ? new DenyAccess(Permission, new DenyAccessExtension())
                 : null;
         }
 
         public IAccess<Permission> AuthorizeByType(IPrincipal principal, Type type, object instance, string property)
         {
 
-            return AuthorizeByType(principal, type, null);
+            return Roles.Any(principal.IsInRole) &&
+                    _condition.CustomMethod(ConditionType ?? type, Condition, principal, instance, property)
+                    ? new DenyAccess(Permission, new DenyAccessExtension())
+                : null;
+        }
+
+        public DenyAttribute()
+        {
+            _condition = new BasicAuthenticationCustomizer<bool>();
         }
     }
 }
