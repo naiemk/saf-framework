@@ -10,7 +10,7 @@ namespace saf.Attributes
     {
         public string Method { get; set; }
         public Type CustomType { get; set; }
-
+        private IAuthenticationCustomizer<Permission?> _authorizationCustomizer;
         /// <summary>
         /// Returns the authorization result. This method will not set the PartialAccessExtension
         /// </summary>
@@ -20,18 +20,19 @@ namespace saf.Attributes
         public IAccess<Permission> AuthorizeByType(IPrincipal principal, Type type, object instance)
         {
             //Run the custom authorizer
-            var met = CustomType.GetMethod(Method);
-            var perm = met.Invoke(null, new[] { principal, instance });
+            var perm = _authorizationCustomizer.CustomMethod(CustomType ?? type, Method, principal, instance);
             return perm != null ? new GrantAccess(((Permission?)perm).Value, null) : null;
         }
 
         public IAccess<Permission> AuthorizeByType(IPrincipal principal, Type type, object instance, string property)
-        {
-            //Run the custom authorizer
-            var met = CustomType.GetMethod(Method);
-            var prop = type.GetProperty(property);
-            var perm = (Permission?)met.Invoke(null, new[] { principal, instance, prop.GetValue(instance, null) });
+        {            
+            var perm = _authorizationCustomizer.CustomMethod(CustomType ?? type, Method, principal, instance, property);
             return perm.HasValue ? new GrantAccess(perm.Value, null) : null;
+        }
+
+        public AuthorizationCustomAttribute()
+        {
+            _authorizationCustomizer = new BasicAuthenticationCustomizer<Permission?>();
         }
     }
 }

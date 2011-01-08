@@ -10,13 +10,10 @@ namespace saf.Extraction
 {
     internal static class PermissionHelper
     {
-        internal static IAccess<Permission> GetObjectLevelPremission
-            (IMetadataClassProvider metadataProvider, Type type, object instance, IPrincipal principal)
+        internal static IAccess<TP> GetObjectLevelPremission<TP>
+            (IAuthorizationRuleProvider<TP> authorizationProvider, Type type, object instance, IPrincipal principal)
         {
-            var meta = metadataProvider.GetMetadataType(type);
-
-            //Get all attributes for the type
-            var authorizers = meta.GetCustomAttributes(false).OfType<IPrincipalAuthorizer<Permission>>();
+            var authorizers = authorizationProvider.GetAuthorizers(type);
 
             var rv =
                 authorizers.Select(a => a.AuthorizeByType(principal, type, instance))
@@ -27,36 +24,31 @@ namespace saf.Extraction
         }
 
         internal static IDictionary<String, IAccess<TP>> GetPropertyLevelPremissions<TP>
-           (IMetadataClassProvider metadataProvider, IAccess<TP> reflectedPermission, Type type, object instance, IPrincipal principal)
+           (IAuthorizationRuleProvider<TP> authorizationRuleProvider, IAccess<TP> reflectedPermission, Type type, object instance, IPrincipal principal)
         {
-            var meta = metadataProvider.GetMetadataType(type);
-
-            //Get all properties
-            var props = meta.GetProperties();
             var rv = new Dictionary<string, IAccess<TP>>();
 
-            foreach (var propertyInfo in props)
+            var propAuthorizers = authorizationRuleProvider.GetPropertyAuthorizers(type);
+
+            foreach (var propAuthorizer in propAuthorizers)
             {
-                var propPerm = GetPropertyPermissions<TP>(propertyInfo, instance, principal);
+                var propPerm = GetPropertyPermissions<TP>(propAuthorizer.Key, propAuthorizer.Value, type, instance, principal);
                 if (propPerm != null)
-                    rv.Add(propertyInfo.Name, reflectedPermission != null ? 
+                    rv.Add(propAuthorizer.Key, reflectedPermission != null ? 
                         reflectedPermission.Intersect(propPerm) : propPerm);
             }
 
             return rv;
         }
 
-        internal static IAccess<TP> GetPropertyPermissions<TP>(PropertyInfo propertyInfo, object instance, IPrincipal principal)
+        internal static IAccess<TP> GetPropertyPermissions<TP>(string name, IEnumerable<IPrincipalAuthorizer<TP>> authorizers, Type reflectedType, object instance, IPrincipal principal)
         {
             //Get all attributes for the type
-            var authorizers = propertyInfo.GetCustomAttributes(false).OfType<IPrincipalAuthorizer<TP>>();
 
-            var rv =
-                authorizers.Select(a => a.AuthorizeByType(principal, propertyInfo.ReflectedType, instance, propertyInfo.Name))
+            return
+                authorizers.Select(a => a.AuthorizeByType(principal, reflectedType, instance, name))
                 .Where(p => p != null).Select(p => p)
                 .Union();
-
-            return rv;
         }
     }
 }
