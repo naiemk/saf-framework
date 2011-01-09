@@ -12,6 +12,10 @@
     <AssemblyName>saf</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,6 +51,7 @@
     <Compile Include="Authorization\AuthorizationContext.cs" />
     <Compile Include="Authorization\BasicAuthenticationCustomizer.cs" />
     <Compile Include="Authorization\AuthorizationToken.cs" />
+    <Compile Include="Authorization\AuthorizationTokens.cs" />
     <Compile Include="Authorization\DenyAccess.cs" />
     <Compile Include="Authorization\DenyAccessExtension.cs" />
     <Compile Include="Attributes\DenyAttribute.cs" />
