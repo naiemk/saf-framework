@@ -24,7 +24,7 @@ namespace saf.Authorization
             return Management.AuthorizationHelper.GetAuthorizationToken
                 (
                     _authorizationRuleProvider,
-                    instance.GetType(),
+                    _metadataProvider.GetMetadataType(instance.GetType()),
                     instance,
                     _principalProvider.GetCurrentPrincipal()
                 );
@@ -35,7 +35,7 @@ namespace saf.Authorization
             return Management.AuthorizationHelper.CanUpdate
                 (
                     _authorizationRuleProvider,
-                    instance.GetType(),
+                    _metadataProvider.GetMetadataType(instance.GetType()),
                     instance,
                     _principalProvider.GetCurrentPrincipal()
                 );
@@ -46,7 +46,7 @@ namespace saf.Authorization
             return Management.AuthorizationHelper.CanInsert
                 (
                     _authorizationRuleProvider,
-                    instance.GetType(),
+                    _metadataProvider.GetMetadataType(instance.GetType()),
                     instance,
                     _principalProvider.GetCurrentPrincipal()
                 );
@@ -57,7 +57,7 @@ namespace saf.Authorization
             return Management.AuthorizationHelper.CanDelete
                 (
                     _authorizationRuleProvider,
-                    instance.GetType(),
+                    _metadataProvider.GetMetadataType(instance.GetType()),
                     instance,
                     _principalProvider.GetCurrentPrincipal()
                 );

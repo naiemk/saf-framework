@@ -8,6 +8,6 @@ namespace saf.Base
 {
     public interface IPrincipalProvider
     {
-        public IPrincipal GetCurrentPrincipal();
+        IPrincipal GetCurrentPrincipal();
     }
 }

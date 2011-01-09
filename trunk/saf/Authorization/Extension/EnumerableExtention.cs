@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Principal;
-using saf.Authorization.Management;
-using saf.Authorization;
-using saf.Base;
 
-namespace saf.Extension
+
+namespace saf.Authorization.Extension
 {
     public static class EnumerableExtension
     {
@@ -20,10 +17,10 @@ namespace saf.Extension
             return list.Select(l => 
                 new Tuple<T, AuthorizationToken>(l, context.GetAuthorizationToken(l)))
                 .Where(t => t.Item2 != null )
-                .Select(t => ScrapUnAuthorized(t) );
+                .Select(ScrapUnAuthorized );
         }
 
-        public static IEnumerable<T> FilterUnAuthorize<T>(this IEnumerable<T> list, AuthorizationContext context)
+        public static IEnumerable<T> FilterUnAuthorized<T>(this IEnumerable<T> list, AuthorizationContext context)
         {
             return FilterUnAuthorizedWithToken(list, context).Select(t => t.Item1);
         }
