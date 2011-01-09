@@ -7,7 +7,7 @@ namespace saf.Base
 {
     public interface IAuthorizationRuleProvider<T>
     {
-        public IEnumerable<IPrincipalAuthorizer<T>> GetAuthorizers(Type type);
-        public IDictionary<string, IEnumerable<IPrincipalAuthorizer<TP>>> GetPropertyAuthorizers(Type type);
+        IEnumerable<IPrincipalAuthorizer<T>> GetAuthorizers(Type type);
+        IDictionary<string, IEnumerable<IPrincipalAuthorizer<T>>> GetPropertyAuthorizers(Type type);
     }
 }

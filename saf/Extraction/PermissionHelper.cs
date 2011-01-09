@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Security.Principal;
 using saf.Base;
-using saf.Extension;
+using saf.Common;
 
 namespace saf.Extraction
 {
-    internal static class PermissionHelper
+    public static class PermissionHelper
     {
-        internal static IAccess<TP> GetObjectLevelPremission<TP>
+        public static IAccess<TP> GetObjectLevelPremission<TP>
             (IAuthorizationRuleProvider<TP> authorizationProvider, Type type, object instance, IPrincipal principal)
         {
             var authorizers = authorizationProvider.GetAuthorizers(type);
@@ -23,7 +22,7 @@ namespace saf.Extraction
             return rv;
         }
 
-        internal static IDictionary<String, IAccess<TP>> GetPropertyLevelPremissions<TP>
+        public static IDictionary<String, IAccess<TP>> GetPropertyLevelPremissions<TP>
            (IAuthorizationRuleProvider<TP> authorizationRuleProvider, IAccess<TP> reflectedPermission, Type type, object instance, IPrincipal principal)
         {
             var rv = new Dictionary<string, IAccess<TP>>();
