@@ -50,6 +50,7 @@
     <Compile Include="Authorization\AccessBase.cs" />
     <Compile Include="Attributes\AuthorizationCustomAttribute.cs" />
     <Compile Include="Authorization\AuthorizationContext.cs" />
+    <Compile Include="Authorization\AuthorizationException.cs" />
     <Compile Include="Authorization\BasicAuthenticationCustomizer.cs" />
     <Compile Include="Authorization\AuthorizationToken.cs" />
     <Compile Include="Authorization\AuthorizationTokens.cs" />

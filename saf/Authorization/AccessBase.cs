@@ -1,4 +1,5 @@
-﻿using saf.Base;
+﻿using System;
+using saf.Base;
 using System.Runtime.Serialization;
 
 namespace saf.Authorization
@@ -65,15 +66,16 @@ namespace saf.Authorization
         }
 
         /// <summary>
-        /// Union summs up the access
+        /// Union is overwrites in the order.
         /// </summary>
         public virtual IAccess<Permission> Union(IAccess<Permission> target)
         {
             if (target.Negative != Negative)
             {
-                var pos = target.Negative ? this : target;
-                var neg = !target.Negative ? this : target;
-                return pos.Make(pos.Key & (Permission.All ^ neg.Key), null); 
+                if (Negative) //Ignore the first negative. E.g. Deny Write then Grant Write => Grant Write.
+                    return Make(target.Key, null);
+                if (target.Negative)
+                    return Make(Key & (Permission.All ^ target.Key), null);
             }
             return Make(target.Key | Permission, null);
         }
@@ -88,4 +90,5 @@ namespace saf.Authorization
         #endregion
 
     }
+
 }
