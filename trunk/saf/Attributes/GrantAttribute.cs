@@ -15,7 +15,7 @@ namespace saf.Attributes
         public Type ConditionType;
         public string Condition;
 
-        private IAuthenticationCustomizer<bool> _condition;
+        private readonly IAuthenticationCustomizer<bool> _condition;
 
         public IAccess<Permission> AuthorizeByType(IPrincipal principal, Type type, object instance)
         {
@@ -23,7 +23,10 @@ namespace saf.Attributes
 
             return 
                     Roles.Any(r => principal.IsInRole(r) || r == WildChar) &&
-                    _condition.CustomMethod(ConditionType ?? type, Condition, principal, instance)
+                    (
+                        _condition == null || String.IsNullOrEmpty(Condition) ||
+                        _condition.CustomMethod(ConditionType ?? type, Condition, principal, instance)
+                    )
                     ? new GrantAccess(Permission, null) 
                 : null;
         }
@@ -32,7 +35,10 @@ namespace saf.Attributes
         {
             return 
                 Roles.Any(r => principal.IsInRole(r) || r == WildChar) &&
-                    _condition.CustomMethod(ConditionType ?? type, Condition, principal, instance, property)
+                    (
+                        _condition == null || String.IsNullOrEmpty(Condition) ||
+                        _condition.CustomMethod(ConditionType ?? type, Condition, principal, instance)
+                    )
                     ? new GrantAccess(Permission, null)
                 : null;
         }

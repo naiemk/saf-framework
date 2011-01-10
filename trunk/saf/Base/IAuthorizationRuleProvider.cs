@@ -9,5 +9,6 @@ namespace saf.Base
     {
         IEnumerable<IPrincipalAuthorizer<T>> GetAuthorizers(Type type);
         IDictionary<string, IEnumerable<IPrincipalAuthorizer<T>>> GetPropertyAuthorizers(Type type);
+        Type GetCustomizer(Type type);
     }
 }

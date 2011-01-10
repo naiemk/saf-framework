@@ -8,7 +8,7 @@ namespace saf.Providers
 {
     public class AttributeAuthorizationProvider<TP> : IAuthorizationRuleProvider<TP>
     {
-        IMetadataClassProvider _metadataClassProvider;
+        readonly IMetadataClassProvider _metadataClassProvider;
 
         public IEnumerable<IPrincipalAuthorizer<TP>> GetAuthorizers(Type type)
         {
@@ -31,6 +31,11 @@ namespace saf.Providers
                 .Select( p => new {Name = p.Name, Auths = p.GetCustomAttributes(false).OfType<IPrincipalAuthorizer<TP>>().ToList()} )
                 .Where( p => p.Auths != null && p.Auths.Count > 0 )
                 .ToDictionary( p => p.Name, p => p.Auths.AsEnumerable() );
+        }
+
+        public Type GetCustomizer(Type type)
+        {
+            return _metadataClassProvider.GetMetadataType(type);
         }
     }
 }
