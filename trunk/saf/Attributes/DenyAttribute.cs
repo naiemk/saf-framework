@@ -13,6 +13,7 @@ namespace saf.Attributes
         public int Order { get; set; }
         public String[] Roles;
         public Permission Permission;
+        public const string WildChar = "*";
         public Type ConditionType;
         public string Condition;
 
@@ -22,7 +23,7 @@ namespace saf.Attributes
         {
             //If the principle is in roles, deny permission from it
 
-            return Roles.Any(principal.IsInRole) &&
+            return Roles.Any( r => principal.IsInRole(r) || r == WildChar ) &&
                     (
                         _condition == null || String.IsNullOrEmpty(Condition) ||
                         _condition.CustomMethod(ConditionType ?? type, Condition, principal, instance)
@@ -34,7 +35,7 @@ namespace saf.Attributes
         public IAccess<Permission> AuthorizeByType(IPrincipal principal, Type type, object instance, string property)
         {
 
-            return Roles.Any(principal.IsInRole) &&
+            return Roles.Any( r => principal.IsInRole(r) || r == WildChar ) &&
                     (
                         _condition == null || String.IsNullOrEmpty(Condition) ||
                         _condition.CustomMethod(ConditionType ?? type, Condition, principal, instance)
