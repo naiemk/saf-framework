@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="AuthorizationHelperTest.cs" />
     <Compile Include="EnumerableExtensionTest.cs" />
+    <Compile Include="ImportTestObject.cs" />
     <Compile Include="PermissionHelperTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestObject.cs" />

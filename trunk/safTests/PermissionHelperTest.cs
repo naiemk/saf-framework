@@ -75,7 +75,8 @@ namespace safTests
         [TestMethod()]
         public void GetObjectLevelPremissionTest()
         {
-            IMetadataClassProvider metadataProvider = new SelfMetadata();
+            IMetadataClassProvider metaProv = new SelfMetadata();
+            var attProv = new AttributeAuthorizationProvider<Permission>(metaProv);
             var to = new TestObject();
             var everyone = new TestUser() { Roles = new[] { "Everyone" } };
             var god = new TestUser() { Roles = new[] { "God" } };
@@ -84,31 +85,31 @@ namespace safTests
             var userWA = new TestUser() { Roles = new[] { "WAuser" } };
             var userQLD = new TestUser() { Roles = new[] { "QLDuser" } };
 
-            var actual = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, everyone);
+            var actual = PermissionHelper.GetObjectLevelPremission(attProv, typeof(TestObject), to, everyone);
             Assert.AreEqual(true, actual.Key.HasFlag(Permission.View));
             Assert.AreEqual(false, actual.Key.HasFlag(Permission.Edit));
             Assert.AreEqual(false, actual.Key.HasFlag(Permission.Create));
 
-            actual = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, god);
+            actual = PermissionHelper.GetObjectLevelPremission(attProv, typeof(TestObject), to, god);
             Assert.AreEqual(true, actual.Key.HasFlag(Permission.Own));
 
-            actual = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, adminNsw);
+            actual = PermissionHelper.GetObjectLevelPremission(attProv, typeof(TestObject), to, adminNsw);
             Assert.AreEqual(false, actual.Key.HasFlag(Permission.Edit));
             Assert.AreEqual(true, actual.Key.HasFlag(Permission.View));
 
-            actual = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, adminQld);
+            actual = PermissionHelper.GetObjectLevelPremission(attProv, typeof(TestObject), to, adminQld);
             Assert.AreEqual(true, actual.Key.HasFlag(Permission.Edit));
             Assert.AreEqual(true, actual.Key.HasFlag(Permission.View));
 
             to = new TestObject() { States = new[] { "QLD", "NSW" } };
-            actual = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, userWA);
+            actual = PermissionHelper.GetObjectLevelPremission(attProv, typeof(TestObject), to, userWA);
             Assert.IsNull(actual);
 
-            actual = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, userQLD);
+            actual = PermissionHelper.GetObjectLevelPremission(attProv, typeof(TestObject), to, userQLD);
             Assert.AreEqual(true, actual.Key.HasFlag(Permission.View));
             Assert.AreEqual(true, actual.Key.HasFlag(Permission.Create));
 
-            actual = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, adminQld);
+            actual = PermissionHelper.GetObjectLevelPremission(attProv, typeof(TestObject), to, adminQld);
             Assert.AreEqual(true, actual.Key.HasFlag(Permission.Delete));
             Assert.AreEqual(true, actual.Key.HasFlag(Permission.View));
         }
@@ -117,14 +118,15 @@ namespace safTests
         [TestMethod()]
         public void GetPropertyLevelPremissionsTest()
         {
-            IMetadataClassProvider metadataProvider = new SelfMetadata();
+            IMetadataClassProvider metaProv = new SelfMetadata();
+            var attProv = new AttributeAuthorizationProvider<Permission>(metaProv);
             var to = new TestObject();
             var everyone = new TestUser() { Roles = new[] { "Everyone" } };
             var god = new TestUser() { Roles = new[] { "God" } };
             var anon = new TestUser() { Roles = new string[0] };
 
-            var parent = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, everyone);
-            var actual = PermissionHelper.GetPropertyLevelPremissions(metadataProvider, parent, typeof(TestObject), to, everyone);
+            var parent = PermissionHelper.GetObjectLevelPremission(attProv, typeof(TestObject), to, everyone);
+            var actual = PermissionHelper.GetPropertyLevelPremissions(attProv, parent, typeof(TestObject), to, everyone);
             Assert.AreEqual(true, actual["YouCanSeeMe"].Key.HasFlag(Permission.View));
             Assert.AreEqual(false, actual["YouCanSeeMe"].Key.HasFlag(Permission.Edit));
             Assert.AreEqual(false, actual["YouCanSeeMe"].Key.HasFlag(Permission.Create));
@@ -132,26 +134,46 @@ namespace safTests
             Assert.AreEqual(true, actual["YouCanSeeMeButNotEditMe"].Key.HasFlag(Permission.View));
             Assert.AreEqual(false, actual["YouCanSeeMeButNotEditMe"].Key.HasFlag(Permission.Edit));
 
-            parent = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, god);
-            actual = PermissionHelper.GetPropertyLevelPremissions(metadataProvider, parent, typeof(TestObject), to, god);
+            parent = PermissionHelper.GetObjectLevelPremission(attProv, typeof(TestObject), to, god);
+            actual = PermissionHelper.GetPropertyLevelPremissions(attProv, parent, typeof(TestObject), to, god);
             Assert.AreEqual(false, actual["YouCanSeeMe"].Key.HasFlag(Permission.View));
             Assert.AreEqual(false, actual["YouCanEditMe"].Key.HasFlag(Permission.View));
             Assert.AreEqual(false, actual["YouCanEditMe"].Key.HasFlag(Permission.Edit));
             Assert.AreEqual(false, actual.ContainsKey("YouCanNotSeeMe"));
 
             parent = null;
-            actual = PermissionHelper.GetPropertyLevelPremissions(metadataProvider, parent, typeof(TestObject), to, everyone);
+            actual = PermissionHelper.GetPropertyLevelPremissions(attProv, parent, typeof(TestObject), to, everyone);
             Assert.AreEqual(true, actual["YouCanSeeMe"].Key.HasFlag(Permission.View));
 
-            parent = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, anon);
-            actual = PermissionHelper.GetPropertyLevelPremissions(metadataProvider, parent, typeof(TestObject), to, anon);
+            parent = PermissionHelper.GetObjectLevelPremission(attProv, typeof(TestObject), to, anon);
+            actual = PermissionHelper.GetPropertyLevelPremissions(attProv, parent, typeof(TestObject), to, anon);
             Assert.AreEqual(true, actual["EverybodyCanSeeMe"].Key.HasFlag(Permission.View));
 
             var qldMan = new TestUser() { Roles = new[] { "QLDMan" } };
             to = new TestObject() {YouCanSeeMe = 0, States = new[] {"QLD", "NSW"}};
-            parent = PermissionHelper.GetObjectLevelPremission(metadataProvider, typeof(TestObject), to, qldMan);
-            actual = PermissionHelper.GetPropertyLevelPremissions(metadataProvider, parent, typeof(TestObject), to, qldMan);
+            parent = PermissionHelper.GetObjectLevelPremission(attProv, typeof(TestObject), to, qldMan);
+            actual = PermissionHelper.GetPropertyLevelPremissions(attProv, parent, typeof(TestObject), to, qldMan);
             Assert.AreEqual(false, actual["EverybodyCanSeeMe"].Key.HasFlag(Permission.View));
+        }
+
+
+        [TestMethod]
+        public void ImportAttributeTest()
+        {
+            IMetadataClassProvider metaProv = new SelfMetadata();
+            var attProv = new AttributeAuthorizationProvider<Permission>(metaProv);
+
+            var to = new ImportTestObject();
+
+            var everyone = new TestUser() { Roles = new[] { "Everyone"} };
+            //Shoud see to, to.prop1 and not to.ptop2
+            var parent = PermissionHelper.GetObjectLevelPremission(attProv, typeof(ImportTestObject), to, everyone);
+            var props = PermissionHelper.GetPropertyLevelPremissions(attProv, parent, typeof(ImportTestObject), to, everyone);
+            Assert.AreEqual(true, props["prop1"].Key.HasFlag(Permission.View));
+            Assert.AreEqual(false, props["prop2"].Key.HasFlag(Permission.Edit));
+            Assert.AreEqual(true, parent.Key.HasFlag(Permission.View));
+            Assert.AreEqual(false, parent.Key.HasFlag(Permission.Edit));
+
         }
 
     }

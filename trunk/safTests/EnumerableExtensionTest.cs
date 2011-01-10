@@ -1,4 +1,5 @@
-﻿using saf.Extension;
+﻿using saf.Authorization;
+using saf.Authorization.Extension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using saf.Base;
@@ -72,6 +73,8 @@ namespace safTests
         public void FilterAuthorizedTest()
         {
             IMetadataClassProvider sm = new SelfMetadata();
+            var appProv = new AttributeAuthorizationProvider<Permission>(sm);
+            var contx = new AuthorizationContext(sm, appProv, new TestUser());
             var everyone = new TestUser() { Roles = new[] { "Everyone" } };
             var qldMan = new TestUser() { Roles = new[] { "QLDMan" } };
 
@@ -83,10 +86,13 @@ namespace safTests
                                new TestObject() {YouCanSeeMe = 3},
                                new TestObject() {YouCanSeeMe = 4, YouCanNotSeeMe = "b"}
                            };
-            var filtered = coll.FilterAuthorized(sm, everyone).ToList();
+
+            contx = new AuthorizationContext(sm, appProv, everyone);
+            var filtered = coll.FilterUnAuthorized(contx).ToList();
             Assert.AreEqual(5, filtered.Count());
 
-            filtered = coll.FilterAuthorized(sm, qldMan).ToList();
+            contx = new AuthorizationContext(sm, appProv, qldMan);
+            filtered = coll.FilterUnAuthorized(contx).ToList();
             Assert.AreEqual(2, filtered.Count());
 
             //Ensure unavailable data is scraped.
