@@ -21,7 +21,10 @@ namespace saf.Attributes
             //If the principle is in roles, deny permission from it
 
             return Roles.Any(principal.IsInRole) &&
-                    _condition.CustomMethod(ConditionType ?? type, Condition, principal, instance)
+                    (
+                        _condition == null || String.IsNullOrEmpty(Condition) ||
+                        _condition.CustomMethod(ConditionType ?? type, Condition, principal, instance)
+                    )
                     ? new DenyAccess(Permission, new DenyAccessExtension())
                 : null;
         }
@@ -30,7 +33,10 @@ namespace saf.Attributes
         {
 
             return Roles.Any(principal.IsInRole) &&
-                    _condition.CustomMethod(ConditionType ?? type, Condition, principal, instance, property)
+                    (
+                        _condition == null || String.IsNullOrEmpty(Condition) ||
+                        _condition.CustomMethod(ConditionType ?? type, Condition, principal, instance)
+                    )
                     ? new DenyAccess(Permission, new DenyAccessExtension())
                 : null;
         }

@@ -24,7 +24,7 @@ namespace saf.Authorization
             return Management.AuthorizationHelper.GetAuthorizationToken
                 (
                     _authorizationRuleProvider,
-                    _metadataProvider.GetMetadataType(instance.GetType()),
+                    instance.GetType(),
                     instance,
                     _principalProvider.GetCurrentPrincipal()
                 );

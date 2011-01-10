@@ -15,7 +15,7 @@ namespace saf.Extraction
             var authorizers = authorizationProvider.GetAuthorizers(type);
 
             var rv =
-                authorizers.Select(a => a.AuthorizeByType(principal, type, instance))
+                authorizers.Select(a => a.AuthorizeByType(principal, authorizationProvider.GetCustomizer(type), instance))
                 .Where(p => p != null).Select(p => p)
                 .Union();
 
