@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using saf.Authorization;
 using saf.Base;
@@ -7,7 +8,7 @@ using System.Security.Principal;
 namespace saf.Attributes
 {
     [AttributeUsageAttribute(AttributeTargets.Class |  AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true)]
-    public class GrantAttribute : Attribute, IPrincipalAuthorizer<Permission>
+    public class GrantAttribute : Attribute, IPrincipalAuthorizer<Permission>, IAuthorizerContainer<Permission>
     {
         public String[] Roles;
         public Permission Permission;
@@ -46,6 +47,11 @@ namespace saf.Attributes
         public GrantAttribute()
         {
             _condition = new BasicAuthenticationCustomizer<bool>();
+        }
+
+        public IEnumerable<IPrincipalAuthorizer<Permission>> GetAuthorizers()
+        {
+            yield return this;
         }
     }
 }

@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\ImportAuthorizationAttribute.cs" />
     <Compile Include="Authorization\AccessBase.cs" />
     <Compile Include="Attributes\AuthorizationCustomAttribute.cs" />
     <Compile Include="Authorization\AuthorizationContext.cs" />
@@ -65,6 +66,7 @@
     <Compile Include="Base\IAccessFactory.cs" />
     <Compile Include="Base\IAuthenticationCustomizer.cs" />
     <Compile Include="Base\IAuthorizationRuleProvider.cs" />
+    <Compile Include="Base\IAuthorizerContainer.cs" />
     <Compile Include="Base\IPrincipalAuthorizer.cs" />
     <Compile Include="Authorization\ObjectViewAccess.cs" />
     <Compile Include="Authorization\IsPartialAccessExtension.cs" />
