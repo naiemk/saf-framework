@@ -74,7 +74,7 @@ namespace safTests
         {
             IMetadataClassProvider sm = new SelfMetadata();
             var appProv = new AttributeAuthorizationProvider<Permission>(sm);
-            var contx = new AuthorizationContext(sm, appProv, new TestUser());
+            var contx = new AuthorizationContext(appProv, new TestUser());
             var everyone = new TestUser() { Roles = new[] { "Everyone" } };
             var qldMan = new TestUser() { Roles = new[] { "QLDMan" } };
 
@@ -87,11 +87,11 @@ namespace safTests
                                new TestObject() {YouCanSeeMe = 4, YouCanNotSeeMe = "b"}
                            };
 
-            contx = new AuthorizationContext(sm, appProv, everyone);
+            contx = new AuthorizationContext(appProv, everyone);
             var filtered = coll.FilterUnAuthorized(contx).ToList();
             Assert.AreEqual(5, filtered.Count());
 
-            contx = new AuthorizationContext(sm, appProv, qldMan);
+            contx = new AuthorizationContext(appProv, qldMan);
             filtered = coll.FilterUnAuthorized(contx).ToList();
             Assert.AreEqual(2, filtered.Count());
 

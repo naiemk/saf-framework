@@ -8,13 +8,11 @@ namespace saf.Authorization
 {
     public class AuthorizationContext
     {
-        IMetadataClassProvider _metadataProvider;
-        IAuthorizationRuleProvider<Permission> _authorizationRuleProvider;
-        IPrincipalProvider _principalProvider;
+        readonly IAuthorizationRuleProvider<Permission> _authorizationRuleProvider;
+        readonly IPrincipalProvider _principalProvider;
 
-        public AuthorizationContext(IMetadataClassProvider meta, IAuthorizationRuleProvider<Permission> rule, IPrincipalProvider pri)
+        public AuthorizationContext(IAuthorizationRuleProvider<Permission> rule, IPrincipalProvider pri)
         {
-            _metadataProvider = meta;
             _authorizationRuleProvider = rule;
             _principalProvider = pri;
         }
@@ -35,7 +33,7 @@ namespace saf.Authorization
             return Management.AuthorizationHelper.CanUpdate
                 (
                     _authorizationRuleProvider,
-                    _metadataProvider.GetMetadataType(instance.GetType()),
+                    instance.GetType(),
                     instance,
                     _principalProvider.GetCurrentPrincipal()
                 );
@@ -46,7 +44,7 @@ namespace saf.Authorization
             return Management.AuthorizationHelper.CanInsert
                 (
                     _authorizationRuleProvider,
-                    _metadataProvider.GetMetadataType(instance.GetType()),
+                    instance.GetType(),
                     instance,
                     _principalProvider.GetCurrentPrincipal()
                 );
@@ -57,7 +55,7 @@ namespace saf.Authorization
             return Management.AuthorizationHelper.CanDelete
                 (
                     _authorizationRuleProvider,
-                    _metadataProvider.GetMetadataType(instance.GetType()),
+                    instance.GetType(),
                     instance,
                     _principalProvider.GetCurrentPrincipal()
                 );
