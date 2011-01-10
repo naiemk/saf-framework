@@ -10,6 +10,7 @@ namespace saf.Attributes
     [AttributeUsageAttribute(AttributeTargets.Class |  AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true)]
     public class GrantAttribute : Attribute, IPrincipalAuthorizer<Permission>, IAuthorizerContainer<Permission>
     {
+        public int Order { get; set; }
         public String[] Roles;
         public Permission Permission;
         public const string WildChar = "*";
