@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using saf.Base;
 using System.Security.Principal;
@@ -7,14 +8,14 @@ using saf.Authorization;
 namespace saf.Attributes
 {
     [AttributeUsageAttribute(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true)]
-    public class DenyAttribute : Attribute, IPrincipalAuthorizer<Permission>
+    public class DenyAttribute : Attribute, IPrincipalAuthorizer<Permission>, IAuthorizerContainer<Permission>
     {
         public String[] Roles;
         public Permission Permission;
         public Type ConditionType;
         public string Condition;
 
-        private IAuthenticationCustomizer<bool> _condition;
+        private readonly IAuthenticationCustomizer<bool> _condition;
 
         public IAccess<Permission> AuthorizeByType(IPrincipal principal, Type type, object instance)
         {
@@ -44,6 +45,11 @@ namespace saf.Attributes
         public DenyAttribute()
         {
             _condition = new BasicAuthenticationCustomizer<bool>();
+        }
+
+        public IEnumerable<IPrincipalAuthorizer<Permission>> GetAuthorizers()
+        {
+            yield return this;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using saf.Base;
 using System.Security.Principal;
 using saf.Authorization;
@@ -6,7 +7,7 @@ using saf.Authorization;
 namespace saf.Attributes
 {
     [AttributeUsageAttribute(AttributeTargets.Class |  AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true)]
-    public class AuthorizationCustomAttribute : Attribute, IPrincipalAuthorizer<Permission>
+    public class AuthorizationCustomAttribute : Attribute, IPrincipalAuthorizer<Permission>, IAuthorizerContainer<Permission>
     {
         public string Method { get; set; }
         public Type CustomType { get; set; }
@@ -33,6 +34,11 @@ namespace saf.Attributes
         public AuthorizationCustomAttribute()
         {
             _authorizationCustomizer = new BasicAuthenticationCustomizer<Permission?>();
+        }
+
+        public IEnumerable<IPrincipalAuthorizer<Permission>> GetAuthorizers()
+        {
+            yield return this;
         }
     }
 }

@@ -14,8 +14,11 @@ namespace saf.Providers
         {
             var meta = _metadataClassProvider.GetMetadataType(type);
 
+            var authorizers = meta.GetCustomAttributes(typeof(IAuthorizerContainer<TP>), false)
+                .OfType<IAuthorizerContainer<TP>>()
+                .SelectMany(a => a.GetAuthorizers());
             //Get all attributes for the type
-            return meta.GetCustomAttributes(false).OfType<IPrincipalAuthorizer<TP>>();
+            return authorizers;
         }
 
         public AttributeAuthorizationProvider(IMetadataClassProvider meta)
@@ -28,7 +31,14 @@ namespace saf.Providers
             var meta = _metadataClassProvider.GetMetadataType(type);
             var props = meta.GetProperties();
             return props
-                .Select( p => new {Name = p.Name, Auths = p.GetCustomAttributes(false).OfType<IPrincipalAuthorizer<TP>>().ToList()} )
+                .Select( p => new
+                                  {
+                                        p.Name,
+                                        Auths = p.GetCustomAttributes(typeof(IAuthorizerContainer<TP>), false)
+                                        .OfType<IAuthorizerContainer<TP>>()
+                                        .SelectMany(a => a.GetAuthorizers())
+                                        .ToList()
+                                  } )
                 .Where( p => p.Auths != null && p.Auths.Count > 0 )
                 .ToDictionary( p => p.Name, p => p.Auths.AsEnumerable() );
         }
