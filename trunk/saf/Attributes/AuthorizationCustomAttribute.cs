@@ -9,6 +9,7 @@ namespace saf.Attributes
     [AttributeUsageAttribute(AttributeTargets.Class |  AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true)]
     public class AuthorizationCustomAttribute : Attribute, IPrincipalAuthorizer<Permission>, IAuthorizerContainer<Permission>
     {
+        public int Order { get; set; }
         public string Method { get; set; }
         public Type CustomType { get; set; }
         private IAuthenticationCustomizer<Permission?> _authorizationCustomizer;

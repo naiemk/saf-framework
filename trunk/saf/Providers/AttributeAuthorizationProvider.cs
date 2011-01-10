@@ -16,6 +16,7 @@ namespace saf.Providers
 
             var authorizers = meta.GetCustomAttributes(typeof(IAuthorizerContainer<TP>), false)
                 .OfType<IAuthorizerContainer<TP>>()
+                .OrderBy(c => c.Order)
                 .SelectMany(a => a.GetAuthorizers());
             //Get all attributes for the type
             return authorizers;
@@ -36,6 +37,7 @@ namespace saf.Providers
                                         p.Name,
                                         Auths = p.GetCustomAttributes(typeof(IAuthorizerContainer<TP>), false)
                                         .OfType<IAuthorizerContainer<TP>>()
+                                        .OrderBy(c => c.Order)
                                         .SelectMany(a => a.GetAuthorizers())
                                         .ToList()
                                   } )
