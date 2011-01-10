@@ -6,7 +6,7 @@ using System.Text;
 
 namespace safTests
 {
-    class TestUser : IPrincipal
+    class TestUser : IPrincipal, saf.Base.IPrincipalProvider
     {
         public string[] Roles { get; set; }
         public bool IsInRole(string role)
@@ -17,6 +17,11 @@ namespace safTests
         public IIdentity Identity
         {
             get { return null; }
+        }
+
+        public IPrincipal GetCurrentPrincipal()
+        {
+            return this;
         }
     }
 }

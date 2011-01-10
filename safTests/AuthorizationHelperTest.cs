@@ -73,15 +73,7 @@ namespace safTests
         [TestMethod()]
         public void CanDeleteTest()
         {
-            IMetadataClassProvider meta = null; // TODO: Initialize to an appropriate value
-            Type type = null; // TODO: Initialize to an appropriate value
-            object instance = null; // TODO: Initialize to an appropriate value
-            IPrincipal principal = null; // TODO: Initialize to an appropriate value
-            bool expected = false; // TODO: Initialize to an appropriate value
-            bool actual;
-            actual = AuthorizationHelper.CanDelete(meta, type, instance, principal);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
+
         }
 
         /// <summary>
@@ -90,15 +82,7 @@ namespace safTests
         [TestMethod()]
         public void CanInsertTest()
         {
-            IMetadataClassProvider meta = null; // TODO: Initialize to an appropriate value
-            Type type = null; // TODO: Initialize to an appropriate value
-            object instance = null; // TODO: Initialize to an appropriate value
-            IPrincipal principal = null; // TODO: Initialize to an appropriate value
-            bool expected = false; // TODO: Initialize to an appropriate value
-            bool actual;
-            actual = AuthorizationHelper.CanInsert(meta, type, instance, principal);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
+
         }
 
         /// <summary>
@@ -107,15 +91,7 @@ namespace safTests
         [TestMethod()]
         public void CanUpdateTest()
         {
-            IMetadataClassProvider meta = null; // TODO: Initialize to an appropriate value
-            Type type = null; // TODO: Initialize to an appropriate value
-            object instance = null; // TODO: Initialize to an appropriate value
-            IPrincipal principal = null; // TODO: Initialize to an appropriate value
-            bool expected = false; // TODO: Initialize to an appropriate value
-            bool actual;
-            actual = AuthorizationHelper.CanUpdate(meta, type, instance, principal);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
+
         }
 
         /// <summary>
@@ -124,15 +100,7 @@ namespace safTests
         [TestMethod()]
         public void GetAuthorizationTokenTest()
         {
-            IMetadataClassProvider meta = null; // TODO: Initialize to an appropriate value
-            Type type = null; // TODO: Initialize to an appropriate value
-            object instance = null; // TODO: Initialize to an appropriate value
-            IPrincipal principal = null; // TODO: Initialize to an appropriate value
-            AuthorizationToken expected = null; // TODO: Initialize to an appropriate value
-            AuthorizationToken actual;
-            actual = AuthorizationHelper.GetAuthorizationToken(meta, type, instance, principal);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
+           
         }
     }
 }
