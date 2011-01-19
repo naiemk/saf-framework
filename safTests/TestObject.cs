@@ -9,12 +9,12 @@ using saf.Base;
 namespace safTests
 {
 
-    [Grant(Roles = new[] { "Everyone" }, Permission = Permission.View)]
-    [Grant(Roles = new[] { "QLDAdmin", "NSWAdmin" }, Permission = Permission.View | Permission.Edit | Permission.Create)]
-    [Grant(Roles = new[] { "Deleter" }, Permission = Permission.Delete)]
-    [Grant(Roles = new[] { "God" }, Permission = Permission.View | Permission.Own)]
-    [Deny(Roles = new[] { "NSWAdmin" }, Permission = Permission.Edit)]
-    [AuthorizationCustom(CustomType = typeof(TestObject), Method = "OnlyQld")]
+    [Grant(Order = 1, Roles = new[] { "Everyone" }, Permission = Permission.View)]
+    [Grant(Order = 2, Roles = new[] { "QLDAdmin", "NSWAdmin" }, Permission = Permission.View | Permission.Edit | Permission.Create)]
+    [Grant(Order = 3, Roles = new[] { "Deleter" }, Permission = Permission.Delete)]
+    [Grant(Order = 4, Roles = new[] { "God" }, Permission = Permission.View | Permission.Own)]
+    [Deny(Order = 5, Roles = new[] { "NSWAdmin" }, Permission = Permission.Edit)]
+    [AuthorizationCustom(Order = 6, CustomType = typeof(TestObject), Method = "OnlyQld")]
     public class TestObject
     {
         [Grant(Roles = new[] { "Everyone" }, Permission = Permission.View)]
