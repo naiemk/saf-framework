@@ -31,9 +31,9 @@ namespace saf.Extraction
 
             foreach (var propAuthorizer in propAuthorizers)
             {
-                var propPerm = GetPropertyPermissions<TP>(propAuthorizer.Key, propAuthorizer.Value, type, instance, principal);
+                var propPerm = GetPropertyPermissions(propAuthorizer.Key, propAuthorizer.Value, type, instance, principal);
                 if (propPerm != null)
-                    rv.Add(propAuthorizer.Key, reflectedPermission != null ? 
+                    rv.Add(propAuthorizer.Key, reflectedPermission != null ?
                         reflectedPermission.Intersect(propPerm) : propPerm);
             }
 

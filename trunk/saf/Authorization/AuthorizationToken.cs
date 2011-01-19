@@ -13,7 +13,7 @@ namespace saf.Authorization
         //Tuple of propertyname visible editable
         private readonly IList<Tuple<string, bool, bool>> _properties;
 
-        [DataMember] 
+        [DataMember]
         private readonly TypeAuthorizationToken _parentAuthorizationToken;
 
         public AuthorizationToken(TypeAuthorizationToken parent, IEnumerable<Tuple<string, bool, bool>> props)
@@ -25,7 +25,7 @@ namespace saf.Authorization
         public bool Visible(string property = null)
         {
             if (property == null)
-                return _parentAuthorizationToken.Visible; 
+                return _parentAuthorizationToken.Visible;
             return _properties.Where(p => p.Item1 == property).Select(p => (bool?)p.Item2).FirstOrDefault() ??
                 _parentAuthorizationToken.Visible;
         }
@@ -34,14 +34,14 @@ namespace saf.Authorization
         {
             if (property == null)
                 return _parentAuthorizationToken.Editable;
-            return _properties.Where(p => p.Item1 == property).Select(p => (bool?) p.Item2).FirstOrDefault() ??
+            return _properties.Where(p => p.Item1 == property).Select(p => (bool?)p.Item2).FirstOrDefault() ??
                    _parentAuthorizationToken.Editable;
         }
 
-        public static AuthorizationToken Make( IAccess<Permission> typeAccess, 
-            IDictionary<string,IAccess<Permission>> propsAccess )
+        public static AuthorizationToken Make(IAccess<Permission> typeAccess,
+            IDictionary<string, IAccess<Permission>> propsAccess)
         {
-            return typeAccess != null && typeAccess.Key > 0
+            return typeAccess != null && typeAccess.Key > 0 && !typeAccess.Negative
                        ? //Has role
                    new AuthorizationToken(
                        TypeAuthorizationToken.Make(typeAccess),

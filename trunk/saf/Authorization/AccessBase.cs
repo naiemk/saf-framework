@@ -1,11 +1,10 @@
-﻿using System;
-using saf.Base;
+﻿using saf.Base;
 using System.Runtime.Serialization;
 
 namespace saf.Authorization
 {
     [DataContract]
-    public abstract class AccessBase: IAccess<Permission>
+    public abstract class AccessBase : IAccess<Permission>
     {
         [DataMember]
         protected readonly Permission Permission;
@@ -31,7 +30,7 @@ namespace saf.Authorization
             get
             {
                 return AccessExtension;
-            }          
+            }
         }
 
 
@@ -73,7 +72,7 @@ namespace saf.Authorization
             if (target.Negative != Negative)
             {
                 if (Negative) //Ignore the first negative. E.g. Deny Write then Grant Write => Grant Write.
-                    return Make(target.Key, null);
+                    return target.Make(target.Key, null);
                 if (target.Negative)
                     return Make(Key & (Permission.All ^ target.Key), null);
             }
